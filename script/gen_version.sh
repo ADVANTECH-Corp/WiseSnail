@@ -14,14 +14,14 @@ function writeverion() {
 }
 
 
-revision=`svnversion`
+revision=`git rev-parse HEAD | cut -c1-8`
 if [ -f "$versiondef" ];then
 	source $versiondef
 else
 	exit
 fi
 
-version=`printf "%d.%d.%02d.%04d%s" $major $minor $patch $revision $alpha 2>/dev/null`
+version=`printf "%d.%d.%02d.%s%s" $major $minor $patch $revision $alpha 2>/dev/null`
 release=`printf "%d.%d.%02d" $major $minor $patch`
 
 writeverion "$major" "$minor" "$patch" "$alpha" "$model"

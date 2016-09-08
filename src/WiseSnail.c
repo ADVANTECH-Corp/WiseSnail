@@ -21,7 +21,7 @@ void WiseSnail_RegisterInterface(char *ifMac, char *ifName, int ifNumber, WiseSn
 	}
 }
 
-int WiseSnail_Open(char *server_url, int port, char *username, char *password, WiseSnail_InfoSpec *infospec, int count) {
+int WiseSnail_Connect(char *server_url, int port, char *username, char *password, WiseSnail_InfoSpec *infospec, int count) {
 	int ret = 0;
 	if(pmutex != NULL) {
 		pthread_mutex_lock(&mutex);
@@ -56,7 +56,7 @@ void WiseSnail_SenHubReConnected(char *deviceMac) {
 }
 
 
-void WiseSnail_Write(char *deviceMac, WiseSnail_Data* data, int count) {
+void WiseSnail_Update(char *deviceMac, WiseSnail_Data* data, int count) {
 	if(pmutex != NULL) {
 		pthread_mutex_lock(&mutex);
 		WiseAgent_Write(deviceMac, (WiseAgentData*)data, count);
@@ -81,7 +81,7 @@ void WiseSnail_Cmd_Handler(WiseSnail_SleepOneSecond sleepOneSec) {
 	sleepOneSec();
 }
 
-void WiseSnail_Close() {
+void WiseSnail_Uninit() {
 	if(pmutex != NULL) {
 		pthread_mutex_lock(&mutex);
 		WiseAgent_Close();
