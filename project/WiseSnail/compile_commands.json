@@ -1,0 +1,109 @@
+[{
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsoncollection.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsoncollection.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsoncollection.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsonprint.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsonprint.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsonprint.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\AdvVariousType.cpp",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang++ -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\AdvVariousType.cpp -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\AdvVariousType.cpp.o  -g -Wall -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsoncreator.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsoncreator.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsoncreator.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsonparser.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsonparser.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsonparser.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\AdvCollection.cpp",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang++ -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\AdvCollection.cpp -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\AdvCollection.cpp.o  -g -Wall -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsonrule.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsonrule.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsonrule.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\AdvCJSON.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\AdvCJSON.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\AdvCJSON.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\AdvJSON.cpp",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang++ -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\AdvJSON.cpp -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\AdvJSON.cpp.o  -g -Wall -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsontool.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsontool.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvJSON\\src\\jsontool.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\configure.cpp",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang++ -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\configure.cpp -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\configure.cpp.o  -g -Wall -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\tool.cpp",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang++ -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\tool.cpp -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\tool.cpp.o  -g -Wall -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\advstring.cpp",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang++ -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\advstring.cpp -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\advstring.cpp.o  -g -Wall -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\AdvLog.cpp",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang++ -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\AdvLog.cpp -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\AdvLog.cpp.o  -g -Wall -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\rollingfile.cpp",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang++ -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\rollingfile.cpp -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\src\\rollingfile.cpp.o  -g -Wall -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\sample\\logconf.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\sample\\logconf.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\sample\\logconf.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\sample\\test.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\sample\\test.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\library\\AdvLog\\sample\\test.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\wiseaccess.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\wiseaccess.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\wiseaccess.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\liteparse.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\liteparse.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\liteparse.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\wisestorage.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\wisestorage.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\wisestorage.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\PahoCarrier.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\PahoCarrier.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\PahoCarrier.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\WiseSnail.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\WiseSnail.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\WiseSnail.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\wiseutility.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\wiseutility.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\wiseutility.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\WISECore.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\WISECore.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\WISECore.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\MQTTConnector.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\MQTTConnector.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\MQTTConnector.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\wiseagentlite.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\wiseagentlite.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\src\\wiseagentlite.c.o -I. -I."
+ }, {
+  "file": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\sample\\test.c",
+  "directory": "X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\project\\WiseSnail",
+  "command": "clang -c X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\sample\\test.c -o X:\\Product\\WISE\\3310\\SNAIL\\WiseSnail.svn\\sample\\test.c.o -I. -I."
+ }]

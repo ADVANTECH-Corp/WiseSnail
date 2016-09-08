@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: WiseAgent Gateway Core library
+Description: Gateway Core library
+URL: 
+Version: @VERSION@
+Requires:
+Libs: -lWiseCore
+Cflags:

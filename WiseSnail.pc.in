@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: WiseSnail
+Description: Wise Sensor Network Abstract Interactive Layer
+URL: 
+Version: @VERSION@
+Requires:
+Libs: -lWiseSnail
+Cflags:

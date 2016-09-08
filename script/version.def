@@ -1,0 +1,6 @@
+#/bin/sh
+major=1
+minor=0
+patch=0
+alpha=
+model=x86
