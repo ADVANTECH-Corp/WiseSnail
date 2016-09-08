@@ -76,9 +76,11 @@ WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_SenHubReConnected(char *deviceMac
 
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Update(char *deviceMac, WiseSnail_Data* data, int count);
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Get(char *deviceMac, char *name, WiseSnail_Data *data);
-WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Cmd_Handler(WiseSnail_SleepOneSecond sleepOneSec);
+WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_MainLoop(WiseSnail_SleepOneSecond sleepOneSec);
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Uninit();
 
+
+#define WiseSnail_Cmd_Handler WiseSnail_MainLoop
 #define WiseSnail_Open WiseSnail_Connect
 #define WiseSnail_Write WiseSnail_Update
 #define WiseSnail_Read WiseSnail_Get

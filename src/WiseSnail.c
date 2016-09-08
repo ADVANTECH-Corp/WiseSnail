@@ -72,7 +72,7 @@ void WiseSnail_Get(char *deviceMac, char *name, WiseSnail_Data *data) {
 	}
 }
 
-void WiseSnail_Cmd_Handler(WiseSnail_SleepOneSecond sleepOneSec) {
+void WiseSnail_MainLoop(WiseSnail_SleepOneSecond sleepOneSec) {
 	if(pmutex != NULL) {
 		pthread_mutex_lock(&mutex);
 		WiseAgent_Cmd_Handler();
