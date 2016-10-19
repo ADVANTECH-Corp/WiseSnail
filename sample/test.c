@@ -20,7 +20,7 @@ Action/AutoReport*/
 
 
 int Reset(WiseSnail_Data *data) {
-   printf("\n###############Reset name %f\n\n",data->value);
+   printf("\n###############Reset name %d\n\n",data->value);
 }
 
 WiseSnail_InfoSpec interface1[] = {
@@ -241,28 +241,22 @@ int main() {
 
 	WiseSnail_Init("IotGW",NULL, NULL, NULL, 0);
 	WiseSnail_RegisterInterface("000E4CAB1234", "Ethernet", -1, interface1, 1);
-	//WiseSnail_RegisterInterface("000123456788", "Ethernet", -1, interface1, 1);
 	
-    if(WiseSnail_Open(SERVER_URL, 1883, "", "", NULL, 0) == 0) {
-	//if(WiseAgent_OpenBySSL(SERVER_URL, 1883, "admin", "05155853", "", "", "", "") == 0) {
+    if(WiseSnail_Connect(SERVER_URL, 1883, "", "", NULL, 0) == 0) {
     	//
 		// no succesful connection to broker
 		//
 		return -1;
     } else {
     	WiseSnail_RegisterSensor("000E4C000000", "OnBoard", infospec1, sizeof(infospec1)/sizeof(WiseSnail_InfoSpec));
-	sleep(1);
-	WiseSnail_RegisterSensor("000E4C000001", "OnBoard2", infospec2, sizeof(infospec2)/sizeof(WiseSnail_InfoSpec));
-		
-    	//WiseSnail_RegisterSensor("000123456000", "OnBoard", infospec1, sizeof(infospec1)/sizeof(WiseSnail_InfoSpec));
-	//sleep(1);
-	//WiseSnail_RegisterSensor("000123456001", "OnBoard2", infospec2, sizeof(infospec2)/sizeof(WiseSnail_InfoSpec));
+		sleep(1);
+		WiseSnail_RegisterSensor("000E4C000001", "OnBoard2", infospec2, sizeof(infospec2)/sizeof(WiseSnail_InfoSpec));
     }
 	
 	int count = 0;
     int second = 0;
     for(;;) {
-#if 0
+
         if(second == 0) {
 			/*HDC1050_GetSensorData(&Temperature, &Humidity);
 			data[0].value = Temperature;
@@ -286,16 +280,13 @@ int main() {
             printf("\r\n****** \033[33mSend update.\033[0m ******\r\n");
             WiseSnail_Write("000E4C000000", data, 4);
 			WiseSnail_Write("000E4C000001", data, 4);
-			//WiseSnail_Write("000123456000", data, 4);
-			//WiseSnail_Write("000123456001", data, 4);
 			count++;
         }
-#endif
+
 		WiseSnail_Cmd_Handler(sleepOneSecond);
 		
-
 		second = (second+1)%5;
-		//if(count == 3) return 0;
+
     }
 	return 0; 
 }

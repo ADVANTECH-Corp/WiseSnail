@@ -20,10 +20,13 @@
 extern "C" {
 #endif
 
+
+
 typedef enum WiseSnail_DataType
 {
     WISE_SYSTEM,
     WISE_VALUE,
+	WISE_FLOAT,
 	WISE_STRING,
 	WISE_BOOL,
 }WiseSnail_DataType;
@@ -34,7 +37,8 @@ typedef struct WiseSnail_Data{
     WiseSnail_DataType type;
     char *name;
     union {
-        float value;
+        int value;
+		double fvalue;
         char *string;
     };
 	char *clientId;
@@ -50,11 +54,18 @@ struct WiseSnail_InfoSpec{
 	char *name;
 	char *unit;
 	union {
-		float value;
+		int value;
+        double fvalue;
 		char *string;
 	};
-	float min;
-	float max;
+    union {
+		int min;
+        double fmin;
+    };
+	union {
+		int max;
+        double fmax;
+    };
 	char *resourcetype;
 	WiseSnail_SetValue setValue;
 	WiseSnail_GetValue getValue;
@@ -78,7 +89,6 @@ WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Update(char *deviceMac, WiseSnail
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Get(char *deviceMac, char *name, WiseSnail_Data *data);
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_MainLoop(WiseSnail_SleepOneSecond sleepOneSec);
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Uninit();
-
 
 #define WiseSnail_Cmd_Handler WiseSnail_MainLoop
 #define WiseSnail_Open WiseSnail_Connect

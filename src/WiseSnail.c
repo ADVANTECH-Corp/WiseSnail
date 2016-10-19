@@ -1,4 +1,13 @@
+#ifdef __linux__ 
 #include <pthread.h>
+#else
+#define pthread_mutex_t int
+#define pthread_mutex_init(x,y)
+#define pthread_mutex_lock(x)
+#define pthread_mutex_unlock(x)
+#define pthread_mutex_destroy(x)
+#endif
+#include <stdio.h>
 #include "WiseSnail.h"
 #include "wiseagentlite.h"
 
@@ -72,7 +81,7 @@ void WiseSnail_Get(char *deviceMac, char *name, WiseSnail_Data *data) {
 	}
 }
 
-void WiseSnail_MainLoop(WiseSnail_SleepOneSecond sleepOneSec) {
+void WiseSnail_Cmd_Handler(WiseSnail_SleepOneSecond sleepOneSec) {
 	if(pmutex != NULL) {
 		pthread_mutex_lock(&mutex);
 		WiseAgent_Cmd_Handler();

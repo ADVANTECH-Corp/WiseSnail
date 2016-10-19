@@ -7,6 +7,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "wiseconfig.h"
 #include "wiseutility.h"
 //#include "wisemqtt.h"
 #include "wiseagentlite.h"
@@ -14,15 +15,14 @@
 #include "wisestorage.h"
 #include "WISECore.h"
 
-#define MAX_DEVICES 16
-#define MAX_ITEMS 16
-#define MAX_CMDS 16
+
 
 ///cagent/admin/00170d00006063c2/agentactionreq
 static const char *SEN_GET_RESPONSE = "{\"susiCommData\":{\"commCmd\":%d,\"handlerName\":\"%s\",\"sessionID\":\"%s\",\"sensorInfoList\":{\"e\":[%s]}}}";
 //@@@ commandId[n], handlerName[s], sessionId[s], senData[ss]
 
-static const char *SEN_GET_DATA_V_JSON = "{\"n\":\"%s%s\",\"v\":%f,\"StatusCode\":%d}";
+static const char *SEN_GET_DATA_V_JSON = "{\"n\":\"%s%s\",\"v\":%d,\"StatusCode\":%d}";
+static const char *SEN_GET_DATA_FV_JSON = "{\"n\":\"%s%s\",\"v\":%f,\"StatusCode\":%d}";
 static const char *SEN_GET_DATA_SV_JSON = "{\"n\":\"%s%s\",\"sv\":\"%s\",\"StatusCode\":%d}";
 static const char *SEN_GET_DATA_BV_JSON = "{\"n\":\"%s%s\",\"bv\":%d,\"StatusCode\":%d}";
 
@@ -70,7 +70,8 @@ void SetHeartBeatRate(WiseAgentData *data) {
 
 typedef struct wiseagent_cmddata {
     union {
-        float value;
+        int value;
+        double fvalue;
         char string[AGENT_CMD_LEN];
     };
 } WiseAgent_CmdData;
@@ -92,18 +93,6 @@ static int gCmdHead = 0;
 static int gCmdTail = 0;
 WiseAgent_CMD gCmds[MAX_CMDS];
 
-
-/*typedef struct wiseagent_item {
-    WiseDataType type;
-    char name[AGENT_ITEM_NAME_LEN];
-    union {
-        float value;
-        char *string;
-    };
-    WiseMQTT_SetValue setValue;
-	WiseMQTT_GetValue getValue;
-} WiseAgent_ITEM;*/
-
 WiseAgentInfoSpec gGwItem = {
 	.type = WISE_STRING, .name = "/GW/Name", .string = agentCfg.gwName, .setValue = SetGWName
 };
@@ -117,8 +106,6 @@ typedef struct wiseagent_device {
 	WiseAgentInfoSpec *items[MAX_ITEMS];
 	int itemCount;
 } WiseAgent_DEVICE;
-
-
 
 WiseAgent_DEVICE gDevices[MAX_DEVICES];
 static int gDeviceCount = 0;
@@ -206,11 +193,14 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
 						case WISE_VALUE:
 							pos += sprintf(pos, SEN_GET_DATA_V_JSON, *name == '/' ? "" : "/SenData/", name, cmddata->value, statusCode);
 							break;
+                        case WISE_FLOAT:
+							pos += sprintf(pos, SEN_GET_DATA_FV_JSON, *name == '/' ? "" : "/SenData/", name, cmddata->fvalue, statusCode);
+							break;
 						case WISE_STRING:
 							pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, cmddata->string, statusCode);
 							break;
 						case WISE_BOOL:
-							pos += sprintf(pos, SEN_GET_DATA_BV_JSON, *name == '/' ? "" : "/SenData/", name, (int)cmddata->value, statusCode);
+							pos += sprintf(pos, SEN_GET_DATA_BV_JSON, *name == '/' ? "" : "/SenData/", name, cmddata->value, statusCode);
 							break;
 						/*default:
 							wiseprint("Datatype error!!\n");
@@ -225,6 +215,7 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
                     } else {
                         switch(item->type) {
 							case WISE_VALUE:
+                            case WISE_FLOAT:
 							case WISE_BOOL:
 								pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, "Success", 200);
 								break;
@@ -312,15 +303,6 @@ int WiseAccess_AssignCmd(int cmdId, int deviceId, int itemId, int statusCode, ch
 	} else return 0;
 }
 static void CmdNotFound(int cmdId, int statusCode, char *handleName, char *target, char *sessionId) {
-    /*if((gCmdHead+1)%MAX_CMDS != gCmdTail) {
-        WiseAgent_CMD *cmd = &gCmds[gCmdHead];
-        cmd->cmdId = cmdId;
-        cmd->id = -1;
-        if(target != NULL) strcpy(cmd->name,target);
-        cmd->statusCode = statusCode;
-        strcpy(cmd->sessionId, sessionId);
-        gCmdHead = (gCmdHead+1)%MAX_CMDS;
-    }*/
 	WiseAccess_AssignCmd(-1, -1, -1, statusCode, handleName, target, sessionId, NULL, NULL);
 }
 
@@ -529,7 +511,7 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 								memcpy(value, start, (long)(end-start));
 								value[len] = 0;
 								//item->value = atof(value);
-								cmddata.value = atof(value);
+								cmddata.value = atoi(value);
 								data.value = cmddata.value;
 								break;
 							case 's':
@@ -574,6 +556,10 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 									item->getValue(&data);
 									cmddata.value = data.value;
 									break;
+                                case WISE_FLOAT:
+									item->getValue(&data);
+									cmddata.fvalue = data.fvalue;
+									break;
 								case WISE_STRING:
 									data.string = cmddata.string;
 									item->getValue(&data);
@@ -587,6 +573,9 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 							switch(item->type) {
 								case WISE_VALUE:
 									cmddata.value = item->value;
+									break;
+                                case WISE_FLOAT:
+									cmddata.fvalue = item->fvalue;
 									break;
 								case WISE_STRING:
 									strcpy(cmddata.string, item->string);
@@ -663,24 +652,6 @@ void WiseAccess_SensorInit(char *deviceMac, char *shName) {
 	if(d < 1) return;
 	if(gDevices[d].itemCount == 0) {
 		gDevices[d].connection = 1;
-		
-		/*if(strlen(GetSHName(deviceMac)) == 0) {
-			WiseAgentData data;
-			data.string = shName;
-			data.clientId = deviceMac;
-			SetSHName(&data);
-		}*/
-		
-		/*WiseAccess_AddStringItem(deviceMac, WISE_STRING, "/Info/Name", NULL, NULL, "OnBoard");
-		
-		WiseAccess_AddStringItem(deviceMac, WISE_STRING, "/Info/sw", NULL, NULL, INFO_SW);
-		WiseAccess_AddStringItem(deviceMac, WISE_STRING, "/Net/sw", NULL, NULL, NET_SW);
-		
-		WiseAccess_AddStringItem(deviceMac, WISE_STRING, "/Net/Neighbor", NULL, NULL, "");
-		WiseAccess_AddNumberItem(deviceMac, WISE_VALUE, "/Net/Health", NULL, NULL, 100);
-		
-		WiseAccess_AddNumberItem(deviceMac, WISE_BOOL, "/Info/reset", NULL, NULL, 0);
-		WiseAccess_AddNumberItem(deviceMac, WISE_BOOL, "/Action/AutoReport", NULL, NULL, 0);*/
 		
 		WiseAccess_AddItem(deviceMac, "/Info/Name", &gSensorDefaultItem[0]);
 		
@@ -784,6 +755,13 @@ void WiseAccess_AccessVariable(char *deviceId, int set, char *name, WiseAgentDat
                         data->value = item->value;
                     }
                     break;
+                case WISE_FLOAT:
+                    if(set == 1) {
+                        item->fvalue = data->fvalue;
+                    } else {
+                        data->fvalue = item->fvalue;
+                    }
+                    break;
                 case WISE_STRING:
                     if(set == 1) {
 						item->string = data->string;
@@ -862,10 +840,13 @@ void WiseAccess_GenerateTokenCapability(char *deviceId, char *token, char *buffe
 				pos += sprintf(pos, "{\"n\":\"%s\"", item->name+strlen(token) + 2);
 				switch(item->type) {
 					case WISE_VALUE:
-						pos += sprintf(pos, ",\"v\":\"%f\"", item->value);
+						pos += sprintf(pos, ",\"v\":%d", item->value);
+						break;
+                    case WISE_FLOAT:
+						pos += sprintf(pos, ",\"v\":%f", item->fvalue);
 						break;
 					case WISE_BOOL:
-						pos += sprintf(pos, ",\"bv\":\"%d\"", (int)item->value);
+						pos += sprintf(pos, ",\"bv\":%d", item->value);
 						break;
 					case WISE_STRING:
 						pos += sprintf(pos, ",\"sv\":\"%s\"", item->string);
@@ -906,10 +887,13 @@ void WiseAccess_GenerateTokenDataInfo(char *deviceId, char *token, char *buffer,
 				pos += sprintf(pos, "{\"n\":\"%s\"", item->name+strlen(token) + 2);
 				switch(item->type) {
 					case WISE_VALUE:
-						pos += sprintf(pos, ",\"v\":\"%f\"", item->value);
+						pos += sprintf(pos, ",\"v\":%d", item->value);
+						break;
+                    case WISE_FLOAT:
+						pos += sprintf(pos, ",\"v\":%f", item->fvalue);
 						break;
 					case WISE_BOOL:
-						pos += sprintf(pos, ",\"bv\":\"%d\"", (int)item->value);
+						pos += sprintf(pos, ",\"bv\":%d", item->value);
 						break;
 					case WISE_STRING:
 						pos += sprintf(pos, ",\"sv\":\"%s\"", item->string);

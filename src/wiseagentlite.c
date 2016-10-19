@@ -62,9 +62,10 @@ static const char *SEN_CONNECT_JSON = "{\"susiCommData\":{\"devID\":\"%s\",\"hos
 static const char *SEN_INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"SenHub\":{\"SenData\":{\"e\":[%s],\"bn\":\"SenData\"},\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"Net\":{\"e\":[%s],\"bn\":\"Net\"},\"Action\":{\"e\":[%s],\"bn\":\"Action\"},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ hostname[s]{Agriculture}, senData[ss], Health[d], Topology[sl], sMac[s], timestamp[d]
 
-static const char *SEN_INFOSPEC_SENDATA_V_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"v\":%f,\"min\":%f,\"max\":%f,\"asm\":\"%s\",\"type\":\"d\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
-static const char *SEN_INFOSPEC_SENDATA_SV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"sv\":\"%s\",\"min\":%f,\"max\":%f,\"asm\":\"%s\",\"type\":\"s\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
-static const char *SEN_INFOSPEC_SENDATA_BV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"bv\":%d,\"min\":%f,\"max\":%f,\"asm\":\"%s\",\"type\":\"b\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
+static const char *SEN_INFOSPEC_SENDATA_V_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"v\":%d,\"min\":%d,\"max\":%d,\"asm\":\"%s\",\"type\":\"d\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
+static const char *SEN_INFOSPEC_SENDATA_FV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"v\":%f,\"min\":%f,\"max\":%f,\"asm\":\"%s\",\"type\":\"d\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
+static const char *SEN_INFOSPEC_SENDATA_SV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"sv\":\"%s\",\"min\":%d,\"max\":%d,\"asm\":\"%s\",\"type\":\"s\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
+static const char *SEN_INFOSPEC_SENDATA_BV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"bv\":%d,\"min\":%d,\"max\":%d,\"asm\":\"%s\",\"type\":\"b\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
 
 /*
 @@@@@ senData
@@ -82,7 +83,8 @@ static const char *SEN_INFOSPEC_SENDATA_BV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"
 static const char *SEN_DEVINFO_JSON = "{\"susiCommData\":{\"data\":{\"SenHub\":{\"SenData\":{\"e\":[%s],\"bn\":\"SenData\"},\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"Net\":{\"e\":[%s],\"bn\":\"Net\"},\"Action\":{\"e\":[%s],\"bn\":\"Action\"},\"ver\":1}},\"commCmd\":2055,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ senData[ss], Health[d], Topology[sl], sMac[s], timestamp[d]
 
-static const char *SEN_DEVINFO_SENDATA_V_JSON = "{\"n\":\"%s\",\"v\":%f}";
+static const char *SEN_DEVINFO_SENDATA_V_JSON = "{\"n\":\"%s\",\"v\":%d}";
+static const char *SEN_DEVINFO_SENDATA_FV_JSON = "{\"n\":\"%s\",\"v\":%f}";
 static const char *SEN_DEVINFO_SENDATA_SV_JSON = "{\"n\":\"%s\",\"sv\":\"%s\"}";
 static const char *SEN_DEVINFO_SENDATA_BV_JSON = "{\"n\":\"%s\",\"bv\":%d}";
 /*
@@ -191,12 +193,13 @@ void WiseAgent_RegisterInterface(char *ifMac, char *ifName, int ifNumber, WiseAg
 		{
 			switch(is->type) {
 				case WISE_VALUE:
+                case WISE_FLOAT:
 				case WISE_BOOL:
 				case WISE_STRING:
 					WiseAccess_AddItem(interfaceId, is->name, is);
 					break;
 				default:
-					ADV_ERROR("Infospec datatype error!!\n");
+					wiseprint("Infospec datatype error!!\n");
 					infiniteloop();
 					break;
 			}
@@ -428,6 +431,9 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
 				case WISE_VALUE:
 						format = (char *)SEN_INFOSPEC_SENDATA_V_JSON;
 					break;
+                case WISE_FLOAT:
+						format = (char *)SEN_INFOSPEC_SENDATA_FV_JSON;
+					break;
 				case WISE_STRING:
 						format = (char *)SEN_INFOSPEC_SENDATA_SV_JSON;
 					break;
@@ -448,9 +454,13 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
 					WiseAccess_AddItem(deviceId, is->name, is);
 					pos += sprintf(pos, format, is->name, is->unit, is->value, is->min, is->max, access, is->resourcetype);
 					break;
+                case WISE_FLOAT:
+					WiseAccess_AddItem(deviceId, is->name, is);
+					pos += sprintf(pos, format, is->name, is->unit, is->fvalue, is->fmin, is->fmax, access, is->resourcetype);
+					break;
 				case WISE_BOOL:
 					WiseAccess_AddItem(deviceId, is->name, is);
-					pos += sprintf(pos, format, is->name, is->unit, (int)is->value, is->min, is->max, access, is->resourcetype);
+					pos += sprintf(pos, format, is->name, is->unit, is->value, is->min, is->max, access, is->resourcetype);
 					break;
 				case WISE_STRING:
 					WiseAccess_AddItem(deviceId, is->name, is);
@@ -464,6 +474,7 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
 		} else {
 			switch(is->type) {
 				case WISE_VALUE:
+                case WISE_FLOAT:
 				case WISE_BOOL:
 					WiseAccess_AddItem(deviceId, is->name, is);
 					break;
@@ -586,11 +597,14 @@ void WiseAgent_Write(char *deviceMac, WiseAgentData* data, int count) {
 			case WISE_VALUE:
 				pos += sprintf(pos, SEN_DEVINFO_SENDATA_V_JSON, d->name, d->value);
 				break;
+            case WISE_FLOAT:
+				pos += sprintf(pos, SEN_DEVINFO_SENDATA_FV_JSON, d->name, d->fvalue);
+				break;
 			case WISE_STRING:
 				pos += sprintf(pos, SEN_DEVINFO_SENDATA_SV_JSON, d->name, d->string);
 				break;
 			case WISE_BOOL:
-				pos += sprintf(pos, SEN_DEVINFO_SENDATA_BV_JSON, d->name, (int)d->value);
+				pos += sprintf(pos, SEN_DEVINFO_SENDATA_BV_JSON, d->name, d->value);
 				break;
 			default:
 				wiseprint("Datatype error!!\n");
