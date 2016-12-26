@@ -1,6 +1,2 @@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS=
-if ENABLE_ADVLOG
-SUBDIRS+= library/AdvJSON library/AdvLog
-endif
-SUBDIRS+= library/WiseCore src
+SUBDIRS= library/WiseCarrier/MQTT/WiseCarrier_MQTT_Linux library/WiseCore/WiseCore_MQTT src

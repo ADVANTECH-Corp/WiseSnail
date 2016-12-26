@@ -38,6 +38,7 @@ typedef void (*CORE_START_REPORT_CALLBACK)(const void *pkt, const long pktlength
 typedef void (*CORE_STOP_REPORT_CALLBACK)(const void *pkt, const long pktlength, const char* devid);
 typedef void (*CORE_QUERY_HEARTBEATRATE_CALLBACK)(const char* sessionid,const char* devid);
 typedef void (*CORE_UPDATE_HEARTBEATRATE_CALLBACK)(const int heartbeatrate, const char* sessionid, const char* devid);
+typedef long long (*CORE_GET_TIME_TICK_CALLBACK)();
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -225,6 +226,19 @@ WISECORE_API bool core_server_reconnect_callback_set(CORE_SERVER_RECONNECT_CALLB
 WISECORE_API bool core_iot_callback_set(CORE_GET_CAPABILITY_CALLBACK on_get_capability, CORE_START_REPORT_CALLBACK on_start_report, CORE_STOP_REPORT_CALLBACK on_stop_report);
 
 /*
+ * Function: core_time_tick_callback_set
+ *
+ * Register the callback function to assign time tick.
+ *
+ * Parameters:
+ * 	None
+ *
+ * Returns:
+ * 	boolean value for success or not.	
+ */
+WISECORE_API bool core_time_tick_callback_set(CORE_GET_TIME_TICK_CALLBACK get_time_tick);
+
+/* 
  * Function: core_heartbeat_callback_set
  *
  * Register the callback function to handle the heartbeat rate query and update command.

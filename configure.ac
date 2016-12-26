@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.68])
 AC_INIT([Wise Snail Library], [1.0.00], [fred.chang@advantech.com.tw])
 AM_INIT_AUTOMAKE([foreign -Wall])
 AC_PREFIX_DEFAULT([/usr/])
@@ -19,11 +19,6 @@ AS_IF([test "x$enable_paho" = "xno"],
              [AC_MSG_ERROR([${red}one of these MQTT support must be chosen.(paho , mosquitto)${clr}])
       ])
 ])
-
-AC_ARG_ENABLE([advlog],AS_HELP_STRING([--disable-advlog], [Disable feature AdvLog support]))
-AM_CONDITIONAL([ENABLE_ADVLOG], [test "x$enable_advlog" = "xyes"])
-
-
 
 # Checks for programs.
 AC_PROG_CXX
@@ -46,7 +41,7 @@ AC_CHECK_LIB([rt], [main])
 AC_CHECK_HEADERS([memory.h stdlib.h string.h sys/ioctl.h sys/socket.h unistd.h wchar.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_HEADER_STDBOOL
+#AC_CHECK_HEADER_STDBOOL
 AC_TYPE_INT16_T
 AC_TYPE_INT32_T
 AC_TYPE_INT64_T
@@ -65,5 +60,5 @@ AC_FUNC_REALLOC
 AC_CHECK_FUNCS([gettimeofday memset socket strchr strdup strstr])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
-AC_CONFIG_SUBDIRS([library/AdvJSON library/AdvLog library/WiseCore])
+AC_CONFIG_SUBDIRS([library/WiseCore/WiseCore_MQTT library/WiseCarrier/MQTT/WiseCarrier_MQTT_Linux])
 AC_OUTPUT

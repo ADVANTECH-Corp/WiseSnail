@@ -79,9 +79,6 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@ENABLE_ADVLOG_TRUE@am__append_1 = $(top_builddir)/library/AdvJSON/src/libAdvJSON.la $(top_builddir)/library/AdvLog/src/libAdvLog.la 
-@ENABLE_ADVLOG_FALSE@am__append_2 = -DNATIVE_PRINTF
-@ENABLE_ADVLOG_FALSE@am__append_3 = -DNATIVE_PRINTF
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp $(include_HEADERS) $(noinst_HEADERS)
@@ -125,9 +122,9 @@ am__uninstall_files_from_dir = { \
   }
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libWiseSnail_la_DEPENDENCIES = $(am__append_1)
-am_libWiseSnail_la_OBJECTS = wiseaccess.lo wiseagentlite.lo \
-	wisestorage.lo wiseutility.lo WiseSnail.lo
+libWiseSnail_la_DEPENDENCIES =
+am_libWiseSnail_la_OBJECTS = wisememory.lo wiseaccess.lo \
+	wiseagentlite.lo wisestorage.lo wiseutility.lo WiseSnail.lo
 libWiseSnail_la_OBJECTS = $(am_libWiseSnail_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -316,19 +313,13 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
-AM_CFLAGS = -fPIC -I$(top_srcdir)/inc \
-	-I$(top_srcdir)/library/WiseCore/inc \
-	-I$(top_srcdir)/library/AdvLog/inc $(am__append_2)
-AM_CXXFLAGS = -fPIC -I$(top_srcdir)/inc \
-	-I$(top_srcdir)/library/WiseCore/inc \
-	-I$(top_srcdir)/library/AdvLog/inc $(am__append_3)
+AM_CFLAGS = -fPIC -I$(top_srcdir)/inc -I$(top_srcdir)/library/WiseCore/inc
+AM_CXXFLAGS = -fPIC -I$(top_srcdir)/inc -I$(top_srcdir)/library/WiseCore/inc
 lib_LTLIBRARIES = libWiseSnail.la
-libWiseSnail_la_SOURCES = wiseaccess.c wiseagentlite.c wisestorage.c wiseutility.c WiseSnail.c
-#libWiseSnail_la_LDFLAGS = -Wl,--whole-archive ../library/WiseCore/src/.libs/libWiseCore.so -Wl,--no-whole-archive
-libWiseSnail_la_LIBADD = $(am__append_1)
-#$(top_builddir)/library/WiseCore/src/libWiseCore.la
+libWiseSnail_la_SOURCES = wisememory.c wiseaccess.c wiseagentlite.c wisestorage.c wiseutility.c WiseSnail.c
+libWiseSnail_la_LIBADD = 
 include_HEADERS = ../inc/WiseSnail.h
-noinst_HEADERS = ../inc/wiseaccess.h ../inc/wiseagentlite.h ../inc/wisestorage.h ../inc/wiseutility.h ../inc/snail_version.h
+noinst_HEADERS = ../inc/wisememory.h ../inc/wiseaccess.h ../inc/wiseagentlite.h ../inc/wisestorage.h ../inc/wiseutility.h ../inc/snail_version.h
 all: all-am
 
 .SUFFIXES:
@@ -411,6 +402,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WiseSnail.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wiseaccess.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wiseagentlite.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wisememory.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wisestorage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wiseutility.Plo@am__quote@
 

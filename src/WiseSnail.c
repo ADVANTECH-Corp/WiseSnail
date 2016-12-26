@@ -9,15 +9,20 @@
 #endif
 #include <stdio.h>
 #include "WiseSnail.h"
+#include "wiseconfig.h"
+#include "wisememory.h"
 #include "wiseagentlite.h"
 
 static pthread_mutex_t *pmutex = NULL;
 static pthread_mutex_t mutex;
+static char global_buffer[MAX_BUFFER_SIZE];
 
 void WiseSnail_Init(char *productionName, char *wanIp, unsigned char *parentMac, WiseSnail_InfoSpec *infospec, int count) {
 	if(pmutex == NULL) {
 		pthread_mutex_init(&mutex, NULL);
 		pmutex = &mutex;
+        //WiseMem_Init(global_buffer, MAX_BUFFER_SIZE);
+        WiseMem_Init(NULL, MAX_BUFFER_SIZE);
 		WiseAgent_Init(productionName, wanIp, parentMac, (WiseAgentInfoSpec *)infospec, count);
 	}
 }
@@ -81,7 +86,7 @@ void WiseSnail_Get(char *deviceMac, char *name, WiseSnail_Data *data) {
 	}
 }
 
-void WiseSnail_Cmd_Handler(WiseSnail_SleepOneSecond sleepOneSec) {
+void WiseSnail_MainLoop(WiseSnail_SleepOneSecond sleepOneSec) {
 	if(pmutex != NULL) {
 		pthread_mutex_lock(&mutex);
 		WiseAgent_Cmd_Handler();
@@ -93,6 +98,7 @@ void WiseSnail_Cmd_Handler(WiseSnail_SleepOneSecond sleepOneSec) {
 void WiseSnail_Uninit() {
 	if(pmutex != NULL) {
 		pthread_mutex_lock(&mutex);
+        WiseMem_Destory();
 		WiseAgent_Close();
 		pthread_mutex_unlock(&mutex);
 		pthread_mutex_destroy(&mutex);

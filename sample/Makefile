@@ -9,8 +9,8 @@ AR=ar
 
 INCPATH=-I.
 LIBPATH=-L.
-LIBS=-lpthread -lrt -lWiseSnail -lWiseCore_MQTT_Paho -lpaho-mqtt3cs -lssl -lcrypto
-LIBS2=-lpthread -lrt -lWiseSnail -lWiseCore_MQTT_Mosquitto -lmosquitto -lssl -lcrypto
+LIBS=-lpthread -lrt -lWiseSnail -lWiseCore_MQTT -lWiseCarrier_MQTT_Paho -lpaho-mqtt3cs -lssl -lcrypto
+LIBS2=-lpthread -lrt -lWiseSnail -lWiseCore_MQTT -lWiseCarrier_MQTT_Mosquitto -lmosquitto -lssl -lcrypto
 
 CFLAGS=-g
 LDFLAGS=

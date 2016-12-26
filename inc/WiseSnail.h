@@ -37,8 +37,7 @@ typedef struct WiseSnail_Data{
     WiseSnail_DataType type;
     char *name;
     union {
-        int value;
-		double fvalue;
+		double value;
         char *string;
     };
 	char *clientId;
@@ -54,18 +53,11 @@ struct WiseSnail_InfoSpec{
 	char *name;
 	char *unit;
 	union {
-		int value;
-        double fvalue;
+        double value;
 		char *string;
 	};
-    union {
-		int min;
-        double fmin;
-    };
-	union {
-		int max;
-        double fmax;
-    };
+    double min;
+    double max;
 	char *resourcetype;
 	WiseSnail_SetValue setValue;
 	WiseSnail_GetValue getValue;

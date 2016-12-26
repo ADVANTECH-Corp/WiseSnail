@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+//#include <time.h>
 #include "liteparse.h"
 #include "version.h"
 #include "WISEConnector.h"
@@ -127,6 +127,7 @@ CORE_START_REPORT_CALLBACK g_on_start_report = NULL;
 CORE_STOP_REPORT_CALLBACK g_on_stop_report = NULL;
 CORE_QUERY_HEARTBEATRATE_CALLBACK g_on_query_heartbeatrate = NULL;
 CORE_UPDATE_HEARTBEATRATE_CALLBACK g_on_update_heartbeatrate = NULL;
+CORE_GET_TIME_TICK_CALLBACK g_on_get_timetick = NULL;
 
 core_contex_t g_tHandleCtx;
 bool g_bInited = false;
@@ -134,6 +135,7 @@ bool g_bInited = false;
 static char strPayloadBuff[4096] = {0};
 static char strTopicBuff[128] = {0};
 static int g_iErrorCode;
+static long long g_tick = 0;
 
 bool _get_agentinfo_string(core_contex_t* pHandle, lite_conn_status iStatus, char* strInfo, int iLength)
 {
@@ -153,7 +155,14 @@ bool _get_agentinfo_string(core_contex_t* pHandle, lite_conn_status iStatus, cha
 		return false;
 	}
 
-	tick = (long long) time((time_t *) NULL);
+	if(g_on_get_timetick)
+		tick = g_on_get_timetick();
+	else
+	{
+		//tick = (long long) time((time_t *) NULL);
+		tick = g_tick;
+		g_tick++;
+	}
 
 	iRet = snprintf(strInfo, iLength, DEF_AGENTINFO_JSON, pHandle->strClientID?pHandle->strClientID:"",
 												 pHandle->strParentID?pHandle->strParentID:"",
@@ -193,7 +202,7 @@ bool _send_agent_connect(core_contex_t* pHandle)
 		return false;
 	sprintf(strTopicBuff, DEF_INFOACK_TOPIC, pHandle->strClientID);
 	
-	if(wc_publish((char *)strTopicBuff, strPayloadBuff, strlen(strPayloadBuff), true, 2))
+	if(wc_publish((char *)strTopicBuff, strPayloadBuff, strlen(strPayloadBuff), true, 0))
 	{
 		g_iErrorCode = core_success;
 		return true;
@@ -217,7 +226,7 @@ bool _send_agent_disconnect(core_contex_t* pHandle)
 		return false;
 	sprintf(strTopicBuff, DEF_INFOACK_TOPIC, pHandle->strClientID);
 
-	if(wc_publish((char *)strTopicBuff, strPayloadBuff, strlen(strPayloadBuff), true, 2))
+	if(wc_publish((char *)strTopicBuff, strPayloadBuff, strlen(strPayloadBuff), true, 0))
 	{
 		g_iErrorCode = core_success;
 		return true;
@@ -238,7 +247,14 @@ bool _send_os_info(core_contex_t* pHandle)
 		return false;
 	}
 
-	tick = (long long) time((time_t *) NULL);
+	if(g_on_get_timetick)
+		tick = g_on_get_timetick();
+	else
+	{
+		//tick = (long long) time((time_t *) NULL);
+		tick = g_tick;
+		g_tick++;
+	}
 
 	snprintf(strPayloadBuff, sizeof(strPayloadBuff), DEF_OSINFO_JSON, pHandle->strVersion?pHandle->strVersion:"",
 												 pHandle->strType?pHandle->strType:"IPC",
@@ -255,7 +271,7 @@ bool _send_os_info(core_contex_t* pHandle)
 
 	sprintf(strTopicBuff, DEF_AGENTACT_TOPIC, pHandle->strClientID);
 	
-	if(wc_publish((char *)strTopicBuff, strPayloadBuff, strlen(strPayloadBuff), true, 2))
+	if(wc_publish((char *)strTopicBuff, strPayloadBuff, strlen(strPayloadBuff), true, 0))
 	{
 		g_iErrorCode = core_success;
 		return true;
@@ -270,16 +286,15 @@ bool _send_os_info(core_contex_t* pHandle)
 void _on_connect_cb(void *pUserData)
 {
 	core_contex_t* pHandle = (core_contex_t*)pUserData;
-	char strLocalIP[16] = {0};
-	int socketfd=0;
 		
 	if(pHandle)
 	{
-		pHandle->pSocketfd = socketfd;
+		pHandle->pSocketfd = 0;
 		pHandle->iStatus = core_online;
 
 		if(strlen(pHandle->strLocalIP)<=0)
 		{
+			char strLocalIP[16] = {0};
 			if(wc_address_get(strLocalIP))
 			{
 				strncpy(pHandle->strLocalIP, strLocalIP, sizeof(pHandle->strLocalIP));
@@ -372,7 +387,7 @@ void _on_heartbeatrate_update(core_contex_t* pHandle, char* cmd, const char* str
 	// {"susiCommData":{"commCmd":129,"catalogID":4,"handlerName":"general","sessionID":"0BD843BFB2A34E60A56C3B686BB41C90", "heartbeatrate":60}}
 	char strRate[33] = {0};
 	char strSessionID[33] = {0};
-	int iRate = -1;
+	int iRate;
 	lp_value_get(cmd, "sessionID", strSessionID, sizeof(strSessionID));
 	lp_value_get(cmd, "heartbeatrate", strRate, sizeof(strRate));
 	iRate = atoi(strRate);
@@ -391,9 +406,14 @@ void _get_devid(const char* topic, char* devid)
 	char *start = NULL, *end = NULL;
 	if(topic == NULL) return;
 	if(devid == NULL) return;
-	start = strstr(topic, "/cagent/admin/") + strlen("/cagent/admin/");
+	start = strstr(topic, "/cagent/admin/");
+	if(start)
+	{
+		start += strlen("/cagent/admin/");
 	end = strstr(start, "/");
+		if(end)
 	strncpy(devid, start, end-start);
+}
 }
 
 bool check_cmd(char *payload, char *fmt, wise_comm_cmd_t comm) {
@@ -491,7 +511,7 @@ WISECORE_API bool core_initialize(char* strClientID, char* strHostName, char* st
 	}
 
 	memset(&g_tHandleCtx, 0, sizeof(core_contex_t));
-
+	g_tick = 0;
 	strncpy(g_tHandleCtx.strClientID, strClientID, sizeof(g_tHandleCtx.strClientID));
 	strncpy(g_tHandleCtx.strHostName, strHostName, sizeof(g_tHandleCtx.strHostName));
 	strncpy(g_tHandleCtx.strMAC, strMAC, sizeof(g_tHandleCtx.strMAC));
@@ -516,6 +536,7 @@ WISECORE_API void core_uninitialize()
 		wc_callback_set(NULL, NULL, NULL, NULL);
 		wc_uninitialize();
 	}
+	g_tick = 0;
 }
 
 WISECORE_API bool core_product_info_set(char* strSerialNum, char* strParentID, char* strVersion, char* strType, char* strProduct, char* strManufacture)
@@ -828,6 +849,19 @@ WISECORE_API bool core_iot_callback_set(CORE_GET_CAPABILITY_CALLBACK on_get_capa
 	return true;
 }
 
+WISECORE_API bool core_time_tick_callback_set(CORE_GET_TIME_TICK_CALLBACK get_time_tick)
+{
+	if(!g_bInited)
+	{
+		g_iErrorCode = core_no_init;
+		return false;
+	}
+	g_on_get_timetick = get_time_tick;
+
+	g_iErrorCode = core_success;
+	return true;
+}
+
 WISECORE_API bool core_heartbeat_callback_set(CORE_QUERY_HEARTBEATRATE_CALLBACK on_query_heartbeatrate, CORE_UPDATE_HEARTBEATRATE_CALLBACK on_update_heartbeatrate)
 {
 	if(!g_bInited)
@@ -928,7 +962,7 @@ WISECORE_API bool core_device_register()
 	sprintf(strTopicBuff, DEF_ACTIONACK_TOPIC, g_tHandleCtx.strClientID);
 	wc_subscribe(strTopicBuff, 0);
 
-	wc_subscribe(DEF_AGENTCONTROL_TOPIC, 2);
+	wc_subscribe(DEF_AGENTCONTROL_TOPIC, 0);
 
 	return _send_agent_connect(&g_tHandleCtx);
 }

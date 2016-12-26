@@ -38,7 +38,7 @@ void WiseAgent_GetResponse(int cmdId, char *handler, char *mac, int index, char 
 void WiseAgent_SetResponse(int cmdId, char *handler, char *mac, int index, char *name, char *sessionId, int statusCode);
 
 int WiseAccess_AssignCmd(int cmdId, int deviceId, int itemId, int statusCode, char *handleName, char *target, char *sessionId, void *data, void *userdata);
-void WiseAccess_GetTopology(char *topology);
+void WiseAccess_GetTopology();
 void WiseAccess_GenerateTokenCapability(char *deviceId, char *token, char *buffer, int buflen);
 void WiseAccess_GenerateTokenDataInfo(char *deviceId, char *token, char *buffer, int buflen);
 //Handler
