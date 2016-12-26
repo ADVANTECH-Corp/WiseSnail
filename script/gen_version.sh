@@ -21,11 +21,11 @@ else
 	exit
 fi
 
-version=`printf "%d.%d.%02d.%s%s" $major $minor $patch $revision $alpha 2>/dev/null`
-release=`printf "%d.%d.%02d" $major $minor $patch`
+version=`printf ".%s%s" $revision $alpha 2>/dev/null`
+release=`printf ".%d.%d.%02d" $major $minor $patch`
 
 writeverion "$major" "$minor" "$patch" "$alpha" "$model"
 
-echo "#define SNAIL_RELEASE_VERSION \"SNAIL.$release\"" > $versionh
-echo "#define SNAIL_FACTORY_VERSION \"SNAIL.$version\"" >> $versionh
-echo "#define SNAIL_MODEL \"SNAIL.$model\"" >> $versionh
+echo "#define SNAIL_MODEL \"SNAIL.$model\"" > $versionh
+echo "#define SNAIL_RELEASE_VERSION SNAIL_MODEL\"$release\"" >> $versionh
+echo "#define SNAIL_FACTORY_VERSION SNAIL_RELEASE_VERSION\"$version\"" >> $versionh
