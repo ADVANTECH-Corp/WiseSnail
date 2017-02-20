@@ -11,7 +11,6 @@ void *__WiseMem_Alloc(int len, char *file, int line);
 
 int WiseMem_Size(void *address);
 void WiseMem_Release();
-
 void WiseMem_Destory();
 
 

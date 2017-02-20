@@ -54,24 +54,26 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug"/>
   <VirtualDirectory Name="inc">
     <File Name="../../inc/wiseagentlite.h"/>
     <File Name="../../inc/WiseSnail.h"/>
     <File Name="../../inc/wiseutility.h"/>
     <File Name="../../inc/wisestorage.h"/>
-    <File Name="../../inc/wiseaccess.h"/>
+    <File Name="../../inc/wiseconfig.h"/>
     <File Name="../../inc/snail_version.h"/>
+    <File Name="../../inc/wiseaccess.h"/>
+    <File Name="../../inc/wisememory.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="sample">
+    <File Name="../../sample/test.c"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
     <File Name="../../src/wiseaccess.c"/>
+    <File Name="../../src/wisememory.c"/>
     <File Name="../../src/wisestorage.c"/>
     <File Name="../../src/WiseSnail.c"/>
     <File Name="../../src/wiseutility.c"/>
     <File Name="../../src/wiseagentlite.c"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="sample">
-    <File Name="../../sample/~test.c"/>
-    <File Name="../../sample/test.c"/>
-  </VirtualDirectory>
-  <Dependencies Name="Debug"/>
 </CodeLite_Project>

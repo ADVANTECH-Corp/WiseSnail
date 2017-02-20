@@ -14,7 +14,7 @@
 //#define SERVER_URL 				"dev-wisepaas.eastasia.cloudapp.azure.com"
 //#define SERVER_URL 				"rmm.wise-paas.com"
 //#define SERVER_URL            "172.22.12.9"
-#define SERVER_URL            "172.22.15.134"
+#define SERVER_URL            "172.22.12.154"
 /*Info/reset
 Action/AutoReport*/
 

@@ -64,7 +64,7 @@ static const char *SEN_INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"SenHu
 static const char *SEN_INFOSPEC_SENDATA_V_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"v\":%d,\"min\":%d,\"max\":%d,\"asm\":\"%s\",\"type\":\"d\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
 static const char *SEN_INFOSPEC_SENDATA_FV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"v\":%f,\"min\":%f,\"max\":%f,\"asm\":\"%s\",\"type\":\"d\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
 static const char *SEN_INFOSPEC_SENDATA_SV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"sv\":\"%s\",\"min\":%d,\"max\":%d,\"asm\":\"%s\",\"type\":\"s\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
-static const char *SEN_INFOSPEC_SENDATA_BV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"bv\":%d,\"min\":%d,\"max\":%d,\"asm\":\"%s\",\"type\":\"b\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
+static const char *SEN_INFOSPEC_SENDATA_BV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"bv\":%s,\"min\":false,\"max\":true,\"asm\":\"%s\",\"type\":\"b\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
 
 /*
 @@@@@ senData
@@ -85,7 +85,7 @@ static const char *SEN_DEVINFO_JSON = "{\"susiCommData\":{\"data\":{\"SenHub\":{
 static const char *SEN_DEVINFO_SENDATA_V_JSON = "{\"n\":\"%s\",\"v\":%d}";
 static const char *SEN_DEVINFO_SENDATA_FV_JSON = "{\"n\":\"%s\",\"v\":%f}";
 static const char *SEN_DEVINFO_SENDATA_SV_JSON = "{\"n\":\"%s\",\"sv\":\"%s\"}";
-static const char *SEN_DEVINFO_SENDATA_BV_JSON = "{\"n\":\"%s\",\"bv\":%d}";
+static const char *SEN_DEVINFO_SENDATA_BV_JSON = "{\"n\":\"%s\",\"bv\":%s}";
 /*
 @@@@@
 {"n":"Visible","v":2000}
@@ -507,7 +507,7 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
 					break;
 				case WISE_BOOL:
 					WiseAccess_AddItem(deviceId, is->name, is);
-					pos += sprintf(pos, format, is->name, is->unit, (int)is->value, (int)is->min, (int)is->max, access, is->resourcetype);
+					pos += sprintf(pos, format, is->name, is->unit, is->value > 0 ? "true" : "false", access, is->resourcetype);
 					break;
 				case WISE_STRING:
 					WiseAccess_AddItem(deviceId, is->name, is);
@@ -634,7 +634,7 @@ void WiseAgent_Write(char *deviceMac, WiseAgentData* data, int count) {
 				pos += sprintf(pos, SEN_DEVINFO_SENDATA_FV_JSON, d->name, d->value);
 				break;
             case WISE_BOOL:
-				pos += sprintf(pos, SEN_DEVINFO_SENDATA_BV_JSON, d->name, (int)d->value);
+				pos += sprintf(pos, SEN_DEVINFO_SENDATA_BV_JSON, d->name, d->value > 0 ? "true" : "false");
 				break;
 			case WISE_STRING:
 				pos += sprintf(pos, SEN_DEVINFO_SENDATA_SV_JSON, d->name, d->string);

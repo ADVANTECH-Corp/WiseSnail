@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="WiseCore" InternalType="">
-  <VirtualDirectory Name="src">
-    <VirtualDirectory Name="MQTT">
-      <VirtualDirectory Name="Mosquitto">
-        <File Name="../../library/WiseCore/src/MQTT/Mosquitto/MosquittoCarrier.c"/>
-        <File Name="../../library/WiseCore/src/MQTT/Mosquitto/topic.c"/>
+  <VirtualDirectory Name="WiseCore_MQTT">
+    <VirtualDirectory Name="src">
+      <VirtualDirectory Name="MQTT">
+        <File Name="../../library/WiseCore/WiseCore_MQTT/src/MQTT/MQTTConnector.c"/>
       </VirtualDirectory>
-      <VirtualDirectory Name="Paho">
-        <File Name="../../library/WiseCore/src/MQTT/Paho/PahoCarrier.c"/>
-      </VirtualDirectory>
-      <File Name="../../library/WiseCore/src/MQTT/MQTTConnector.c"/>
+      <File Name="../../library/WiseCore/WiseCore_MQTT/src/liteparse.c"/>
+      <File Name="../../library/WiseCore/WiseCore_MQTT/src/WISECore.c"/>
     </VirtualDirectory>
-    <File Name="../../library/WiseCore/src/liteparse.c"/>
-    <File Name="../../library/WiseCore/src/WISECore.c"/>
+    <VirtualDirectory Name="inc">
+      <File Name="../../library/WiseCore/WiseCore_MQTT/inc/liteparse.h"/>
+      <File Name="../../library/WiseCore/WiseCore_MQTT/inc/WISEConnector.h"/>
+      <File Name="../../library/WiseCore/WiseCore_MQTT/inc/susiaccess_def.h"/>
+      <File Name="../../library/WiseCore/WiseCore_MQTT/inc/MQTTConnector.h"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <Description/>
   <Dependencies/>
@@ -69,14 +70,8 @@
     </Configuration>
   </Settings>
   <VirtualDirectory Name="inc">
-    <File Name="../../library/WiseCore/inc/liteparse.h"/>
-    <File Name="../../library/WiseCore/inc/WISEConnector.h"/>
-    <File Name="../../library/WiseCore/inc/topic.h"/>
-    <File Name="../../library/WiseCore/inc/susiaccess_def.h"/>
     <File Name="../../library/WiseCore/inc/version.h"/>
     <File Name="../../library/WiseCore/inc/WISECore.h"/>
-    <File Name="../../library/WiseCore/inc/PahoCarrier.h"/>
-    <File Name="../../library/WiseCore/inc/WiseCarrier_MQTT.h"/>
-    <File Name="../../library/WiseCore/inc/MQTTConnector.h"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug"/>
 </CodeLite_Project>

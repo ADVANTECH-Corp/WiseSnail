@@ -25,7 +25,7 @@ static const char *SEN_GET_RESPONSE = "{\"susiCommData\":{\"commCmd\":%d,\"handl
 static const char *SEN_GET_DATA_V_JSON = "{\"n\":\"%s%s\",\"v\":%d,\"StatusCode\":%d}";
 static const char *SEN_GET_DATA_FV_JSON = "{\"n\":\"%s%s\",\"v\":%f,\"StatusCode\":%d}";
 static const char *SEN_GET_DATA_SV_JSON = "{\"n\":\"%s%s\",\"sv\":\"%s\",\"StatusCode\":%d}";
-static const char *SEN_GET_DATA_BV_JSON = "{\"n\":\"%s%s\",\"bv\":%d,\"StatusCode\":%d}";
+static const char *SEN_GET_DATA_BV_JSON = "{\"n\":\"%s%s\",\"bv\":%s,\"StatusCode\":%d}";
 
 ///cagent/admin/00170d00006063c2/agentactionreq
 static const char *SEN_SET_RESPONSE = "{\"susiCommData\":{\"commCmd\":%d,\"handlerName\":\"%s\",\"sessionID\":\"%s\",\"sensorInfoList\":{\"e\":[%s]}}}";
@@ -143,12 +143,12 @@ const char *GetSHName(char *deviceId) {
 	} else return NULL;
 }*/
 
-void WiseAccess_RepublishConnectMessage();
+void WiseAccess_RepublishSensorConnectMessage();
 
 void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char *name, char *sessionId, int statusCode, WiseAgent_CmdData* cmddata) {
 	char *mac;
 	char *response = NULL;
-	char *gatewayId = (char *)WiseMem_Alloc(32);
+    char gatewayId[32];
     char *topic = (char *)WiseMem_Alloc(128);
 	char *message = (char *)WiseMem_Alloc(8192);
     char *jsonvalue = (char *)WiseMem_Alloc(1024);
@@ -161,7 +161,6 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
 	}
 	
 	sprintf(gatewayId, "0000%s", &mac[4]);
-	
 	if(strlen(handler) == 5 && strncmp(handler,"IoTGW",5) == 0) {
 		sprintf(topic, WA_PUB_ACTION_TOPIC, gatewayId);
 	} else if(strlen(handler) == 6 && strncmp(handler,"SenHub",6) == 0) {
@@ -171,7 +170,6 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
 	} else {
 		sprintf(topic, WA_PUB_ACTION_TOPIC, mac);
 	}
-
 	
     if(cmdId < 0 && statusCode == 0) {
        sprintf(message, "{\"errorRep\":\"Unknown cmd!\",\"sessionID\":\"%s\"}", sessionId);
@@ -198,7 +196,7 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
 							pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, cmddata->string, statusCode);
 							break;
 						case WISE_BOOL:
-							pos += sprintf(pos, SEN_GET_DATA_BV_JSON, *name == '/' ? "" : "/SenData/", name, (int)cmddata->value, statusCode);
+							pos += sprintf(pos, SEN_GET_DATA_BV_JSON, *name == '/' ? "" : "/SenData/", name, cmddata->value > 0 ? "true" : "false", statusCode);
 							break;
 						/*default:
 							wiseprint("Datatype error!!\n");
@@ -227,7 +225,6 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
                     }
                 } break;
             }
-
         } else {
             if(cmdId == 114) {
                 pos += sprintf(pos, "%s", "FALSE");
@@ -240,7 +237,6 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
 				}
 			}
 		}
-
         switch(cmdId) {
             /*case 114:
                 sprintf(message,SEN_RENAME_RESPONSE, mac, cmdId, handler, sessionId, jsonvalue);
@@ -259,7 +255,7 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
 					core_platform_register();
 					WiseAgent_PublishInterfaceInfoSpecMessage(gatewayId);
 					WiseAgent_PublishInterfaceDeviceInfoMessage(gatewayId);
-					WiseAccess_RepublishConnectMessage();
+					WiseAccess_RepublishSensorConnectMessage();
 					response = NULL;
 				} else {
 					response = gDevices[deviceId].infospec;
@@ -795,7 +791,7 @@ void WiseAccess_GetTopology() {
 	WiseMem_Release();
 }
 
-void WiseAccess_RepublishConnectMessage() {
+void WiseAccess_RepublishSensorConnectMessage() {
 	int i = 0;
 	for(i = 1 ; i < gDeviceCount ; i++) {
 		if(gDevices[i].connection) {
@@ -830,7 +826,7 @@ void WiseAccess_GenerateTokenCapability(char *deviceId, char *token, char *buffe
 						pos += sprintf(pos, ",\"v\":%f", item->value);
 						break;
 					case WISE_BOOL:
-						pos += sprintf(pos, ",\"bv\":%d", (int)item->value);
+						pos += sprintf(pos, ",\"bv\":%s", item->value > 0 ? "true" : "false");
 						break;
 					case WISE_STRING:
 						pos += sprintf(pos, ",\"sv\":\"%s\"", item->string);
@@ -877,7 +873,7 @@ void WiseAccess_GenerateTokenDataInfo(char *deviceId, char *token, char *buffer,
 						pos += sprintf(pos, ",\"v\":%f", item->value);
 						break;
 					case WISE_BOOL:
-						pos += sprintf(pos, ",\"bv\":%d", (int)item->value);
+						pos += sprintf(pos, ",\"bv\":%s", item->value > 0 ? "true" : "false");
 						break;
 					case WISE_STRING:
 						pos += sprintf(pos, ",\"sv\":\"%s\"", item->string);

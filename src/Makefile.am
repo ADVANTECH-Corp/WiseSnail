@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
-AM_CFLAGS = -fPIC -I$(top_srcdir)/inc -I$(top_srcdir)/library/WiseCore/inc
-AM_CXXFLAGS = -fPIC -I$(top_srcdir)/inc -I$(top_srcdir)/library/WiseCore/inc
+AM_CFLAGS = -O0 -fPIC -I$(top_srcdir)/inc -I$(top_srcdir)/library/WiseCore/inc
+AM_CXXFLAGS = -O0 -fPIC -I$(top_srcdir)/inc -I$(top_srcdir)/library/WiseCore/inc
 
 lib_LTLIBRARIES = libWiseSnail.la
 libWiseSnail_la_SOURCES = wisememory.c wiseaccess.c wiseagentlite.c wisestorage.c wiseutility.c WiseSnail.c
