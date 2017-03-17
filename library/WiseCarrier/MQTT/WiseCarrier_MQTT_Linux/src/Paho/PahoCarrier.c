@@ -224,6 +224,7 @@ WISE_CARRIER_API bool WiCar_MQTT_Connect(const char* address, int port, const ch
 		sprintf(IP,"tcp://%s:%d",address,port);		
 
 	printf("IP : %s\n",IP);
+    g_lostconnect_cb = on_lostconnect;
 
 	MQTTClient_create(&client, IP, clientId, MQTTCLIENT_PERSISTENCE_NONE, NULL);
 

@@ -201,19 +201,21 @@ void WiseAgent_RegisterInterface(char *ifMac, char *ifName, int ifNumber, WiseAg
 }
 
 /************************************************************/
-
+static int gLosted = 0;
 void on_connect_cb(int socketfd, char* localip, int iplength)
 {
-	/*char strRecvTopic[256] = {0};
-	sprintf(strRecvTopic, "/cagent/admin/%s/+", GW_MACADDRESS);
-	core_subscribe(strRecvTopic, 0);*/
-
 	wiseprint("CB_Connected \n");
+    if(gLosted) {
+        core_device_register();
+        core_platform_register();
+    }
+    gLosted = 0;
 }
 
 void on_lostconnect_cb(int rc)
 {
 	wiseprint("CB_Lostconnect \n");
+    gLosted = 1;
 }
 
 void on_disconnect_cb()
@@ -327,11 +329,11 @@ static int WiseAgent_OpenBySSL(char *server_url, int port, char *username, char 
 	core_device_register();
 	core_platform_register();
 	
-    topic = (char *)WiseMem_Alloc(128);
+    //topic = (char *)WiseMem_Alloc(128);
 	//Sub
-    sprintf(topic,WA_SUB_CBK_TOPIC, gatewayId);
+    //sprintf(topic,WA_SUB_CBK_TOPIC, gatewayId);
     //WiseAccess_Register(topic);
-    core_subscribe(topic, 0);
+    //core_subscribe(topic, 0);
 
 	//
 	// publish
@@ -344,6 +346,7 @@ static int WiseAgent_OpenBySSL(char *server_url, int port, char *username, char 
 	sprintf(message,OSINFO_JSON, MACADDRESS_N, GetIp(), GW_MACADDRESS, timestamp++);
 	core_publish(topic, message, strlen(message), 0, 0);*/
 
+    topic = (char *)WiseMem_Alloc(128);
     message = (char *)WiseMem_Alloc(8192);
     senhublist = (char *)WiseMem_Alloc(4096);
     infoString = (char *)WiseMem_Alloc(1024);
@@ -402,13 +405,17 @@ int WiseAgent_PublishSensorConnectMessage(char *deviceId) {
 	WiseAccess_Get(deviceId, "/Info/Name", &shname);
 	sprintf(message,SEN_CONNECT_JSON, deviceId, shname.string, deviceId, deviceId, deviceId, timestamp++);
 	core_publish(topic, message, strlen(message), 0, 0);
+    
+    sprintf(topic,WA_SUB_CBK_TOPIC, deviceId);
+	core_subscribe(topic, 0);
+    
     WiseMem_Release();
 }
 
 void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoSpec *infospec, int count) {
 	int number = 0;
 	int index = 0;
-    char *topic = (char *)WiseMem_Alloc(128);
+    char *topic = NULL;
     char *message = NULL;
     char *senhublist = NULL;
     char *infoString = NULL;
@@ -430,8 +437,8 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
 	}
 	ToUpper(deviceId);
 	
-	sprintf(topic,WA_SUB_CBK_TOPIC, deviceId);
-	core_subscribe(topic, 0);
+	//sprintf(topic,WA_SUB_CBK_TOPIC, deviceId);
+	//core_subscribe(topic, 0);
 	
 	WiseAccess_SensorInit(deviceId, defaultName);
     WiseMem_Release();
@@ -494,6 +501,11 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
 				access = "r";
 			} else {
 				access = "rw";
+				if(is->type == WISE_STRING) {
+					if(is->getValue == NULL) {
+						access = "r";
+					}
+				}
 			}
 
 			switch(is->type) {

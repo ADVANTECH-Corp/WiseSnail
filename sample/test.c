@@ -14,7 +14,7 @@
 //#define SERVER_URL 				"dev-wisepaas.eastasia.cloudapp.azure.com"
 //#define SERVER_URL 				"rmm.wise-paas.com"
 //#define SERVER_URL            "172.22.12.9"
-#define SERVER_URL            "172.22.12.154"
+#define SERVER_URL            "172.22.12.178"
 /*Info/reset
 Action/AutoReport*/
 
@@ -278,12 +278,12 @@ int main() {
 			
 			
             printf("\r\n****** \033[33mSend update.\033[0m ******\r\n");
-            WiseSnail_Write("000E4C000000", data, 4);
-			WiseSnail_Write("000E4C000001", data, 4);
+            WiseSnail_Update("000E4C000000", data, 4);
+			WiseSnail_Update("000E4C000001", data, 4);
 			count++;
         }
 
-		WiseSnail_Cmd_Handler(sleepOneSecond);
+		WiseSnail_MainLoop(sleepOneSecond);
 		
 		second = (second+1)%5;
 
