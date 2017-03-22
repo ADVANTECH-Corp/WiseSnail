@@ -782,10 +782,12 @@ void WiseAccess_GetTopology() {
 	
 	char *target = gIf_SenHublist;
 	if(count == 0) {
-		target += sprintf(gIf_SenHublist,"%s",gDevices[0].cliendId);
-		*(target+2) = 0;
+		/*target += sprintf(gIf_SenHublist,"%s",gDevices[0].cliendId);
+		*(target+2) = 0;*/
+        memset(gIf_SenHublist, 0, sizeof(gIf_SenHublist));
 	} else {
-		sprintf(gIf_SenHublist,"%s,%s",gDevices[0].cliendId, topology);
+		//sprintf(gIf_SenHublist,"%s,%s",gDevices[0].cliendId, topology);
+        sprintf(gIf_SenHublist,"%s",topology);
 	}
 	
 	WiseMem_Release();
