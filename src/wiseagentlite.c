@@ -52,7 +52,12 @@ static const char *DEVICEINFO_JSON = "{\"susiCommData\":{\"data\":{\"IoTGW\":{\"
 
 //[Sensor Connect]
 ///cagent/admin/00170d00006063c2/agentinfoack
-static const char *SEN_CONNECT_JSON = "{\"susiCommData\":{\"devID\":\"%s\",\"hostname\":\"%s\",\"sn\":\"%s\",\"mac\":\"%s\",\"version\":\""VERSOIN"\",\"type\":\"SenHub\",\"product\":\"WISE-1020\",\"manufacture\":\"\",\"status\":\"1\",\"commCmd\":1,\"requestID\":30002,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
+static const char *SEN_CONNECT_JSON = "{\"susiCommData\":{\"devID\":\"%s\",\"hostname\":\"%s\",\"sn\":\"%s\",\"mac\":\"%s\",\"version\":\""VERSOIN"\",\"type\":\"SenHub\",\"product\":\"\",\"manufacture\":\"\",\"status\":\"1\",\"commCmd\":1,\"requestID\":30002,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
+//@@@ sMac[s], hostname[s]{Agriculture}, sMac[s], sMac[s], sMac[s], timestamp[d]
+
+//[Sensor Disconnect]
+///cagent/admin/00170d00006063c2/agentinfoack
+static const char *SEN_DISCONNECT_JSON = "{\"susiCommData\":{\"devID\":\"%s\",\"hostname\":\"%s\",\"sn\":\"%s\",\"mac\":\"%s\",\"version\":\""VERSOIN"\",\"type\":\"SenHub\",\"product\":\"\",\"manufacture\":\"\",\"status\":\"0\",\"commCmd\":1,\"requestID\":30002,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ sMac[s], hostname[s]{Agriculture}, sMac[s], sMac[s], sMac[s], timestamp[d]
 
 
@@ -412,6 +417,18 @@ int WiseAgent_PublishSensorConnectMessage(char *deviceId) {
     WiseMem_Release();
 }
 
+int WiseAgent_PublishSensorDisconnectMessage(char *deviceId) {
+    char *topic = (char *)WiseMem_Alloc(128);
+    char *message = (char *)WiseMem_Alloc(8192);
+	sprintf(topic, WA_PUB_CONNECT_TOPIC, deviceId);
+	WiseAgentData shname;
+	WiseAccess_Get(deviceId, "/Info/Name", &shname);
+	sprintf(message,SEN_DISCONNECT_JSON, deviceId, shname.string, deviceId, deviceId, deviceId, timestamp++);
+	core_publish(topic, message, strlen(message), 0, 0);
+    
+    WiseMem_Release();
+}
+
 void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoSpec *infospec, int count) {
 	int number = 0;
 	int index = 0;
@@ -565,6 +582,8 @@ void WiseAgent_SenHubDisconnect(char *deviceMac) {
 	WiseAccess_ConnectionStatus(deviceId, 0);
 	
 	WiseAgent_PublishInterfaceDeviceInfoMessage(gatewayId);
+    
+    WiseAgent_PublishSensorDisconnectMessage(deviceId);
 }
 
 void WiseAgent_SenHubReConnected(char *deviceMac) {
@@ -584,6 +603,8 @@ void WiseAgent_SenHubReConnected(char *deviceMac) {
 	WiseAccess_ConnectionStatus(deviceId, 1);
 	
 	WiseAgent_PublishInterfaceDeviceInfoMessage(gatewayId);
+    
+    WiseAgent_PublishSensorConnectMessage(deviceId);
 }
 
 
