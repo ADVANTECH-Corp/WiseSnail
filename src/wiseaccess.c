@@ -615,12 +615,12 @@ void WiseAccess_InterfaceInit(char *deviceMac, char *name) {
 	int d = WiseAccess_CreateDevice(deviceMac);
 	if(d != 0) return;
 	if(gDevices[d].itemCount == 0) {
-		char *pos = gIf_SenHublist;
+		/*char *pos = gIf_SenHublist;
 		pos += sprintf(pos,"%s",deviceMac);
-		*(pos+2) = 0;
-		gInterfaceItem[0].string = pos+1;
+		*(pos+2) = 0;*/
+		gInterfaceItem[0].string = gIf_SenHublist;
 		WiseAccess_AddItem(deviceMac, "/Info/SenHubList", &gInterfaceItem[0]);
-		gInterfaceItem[1].string = pos+1;
+		gInterfaceItem[1].string = gIf_SenHublist;
 		WiseAccess_AddItem(deviceMac, "/Info/Neighbor", &gInterfaceItem[1]);
 		strncpy(gIf_Name, name, sizeof(gIf_Name));
 		gInterfaceItem[2].string = gIf_Name;
