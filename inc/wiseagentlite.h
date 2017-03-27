@@ -40,11 +40,11 @@ typedef void (*WiseMQTT_Event)(void *eventData);
 #define WiseMQTT_SetValue WiseSnail_SetValue
 #define WiseMQTT_GetValue WiseSnail_GetValue
 
-void WiseAgent_Init(char *productionName, char *wanIp, unsigned char *parentMac, WiseAgentInfoSpec *infospec, int count);
+void WiseAgent_Init(char *productionName, char *wanIp, unsigned char *parentMac, unsigned char *version, WiseAgentInfoSpec *infospec, int count);
 
 void WiseAgent_RegisterInterface(char *ifMac, char *ifName, int ifNumber, WiseAgentInfoSpec *infospec, int count);
 
-int WiseAgent_Open(char *server_url, int port, char *username, char *password, WiseAgentInfoSpec *infospec, int count);
+int WiseAgent_Connect(char *server_url, int port, char *username, char *password, WiseAgentInfoSpec *infospec, int count);
 
 void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoSpec *infospec, int count);
 

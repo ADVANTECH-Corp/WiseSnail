@@ -72,7 +72,11 @@ void SetHeartBeatRate(WiseAgentData *data) {
 typedef struct wiseagent_cmddata {
     union {
         double value;
+#ifdef __MCU__
         char string[AGENT_CMD_LEN];
+#else
+        char *string;
+#endif
     };
 } WiseAgent_CmdData;
 
@@ -194,6 +198,9 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
 							break;
 						case WISE_STRING:
 							pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, cmddata->string, statusCode);
+                            #ifndef __MCU__
+                                free(cmddata->string);
+                            #endif
 							break;
 						case WISE_BOOL:
 							pos += sprintf(pos, SEN_GET_DATA_BV_JSON, *name == '/' ? "" : "/SenData/", name, cmddata->value > 0 ? "true" : "false", statusCode);
@@ -217,11 +224,15 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
 								break;
 							case WISE_STRING:
 								pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, "Success", 200);
+								#ifndef __MCU__
+                                    free(cmddata->string);
+                                #endif
 								break;
 							/*default:
 								wiseprint("Datatype error!!\n");
 								infiniteloop();*/
 						}
+                        
                     }
                 } break;
             }
@@ -301,6 +312,25 @@ int WiseAccess_AssignCmd(int cmdId, int deviceId, int itemId, int statusCode, ch
 }
 static void CmdNotFound(int cmdId, int statusCode, char *handleName, char *target, char *sessionId) {
 	WiseAccess_AssignCmd(-1, -1, -1, statusCode, handleName, target, sessionId, NULL, NULL);
+}
+
+float boolTrans(char *string, int len) {
+	int i = 0;
+	for(i = 0 ; i < len; i++) {
+		if(string[i] == 't') {
+			if(strncmp(&string[i],"true",4) == 0) {
+				return (float)1.0;
+			}
+		}
+
+		if(string[i] == 'f') {
+			if(strncmp(&string[i],"false",5) == 0) {
+				return (float)0.0;
+			}
+		}
+	}
+
+	return (float)atoi(string);
 }
 
 
@@ -505,9 +535,9 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 								len = (long)(end-start);
 								memcpy(value, start, (long)(end-start));
 								value[len] = 0;
-								//item->value = atof(value);
 								cmddata.value = atof(value);
 								data.value = cmddata.value;
+								item->value = cmddata.value;
 								break;
 							case 's':
 								start += 4;
@@ -519,7 +549,11 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 								len = (long)(end-start);
 								memcpy(value, start, len);
 								value[len] = 0;
+                                #ifdef __MCU__
 								strcpy(cmddata.string, value);
+                                #else
+                                    cmddata.string = strdup(value);
+                                #endif
 								data.string = cmddata.string;
 								break;
 							case 'b':
@@ -528,9 +562,9 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 								len = (long)(end-start);
 								memcpy(value, start, len);
 								value[len] = 0;
-								//item->value = (float)atoi(value);
-								cmddata.value = (float)atoi(value);
+								cmddata.value = boolTrans(value,strlen(value));
 								data.value = cmddata.value;
+								item->value = cmddata.value;
 								break;
 							default:
 								break;
@@ -554,6 +588,9 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 									cmddata.value = data.value;
 									break;
 								case WISE_STRING:
+                                    #ifndef __MCU__
+                                        cmddata.string = (char *)malloc(AGENT_CMD_LEN);
+                                    #endif
 									data.string = cmddata.string;
 									item->getValue(&data);
 									break;
@@ -566,8 +603,8 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 									cmddata.value = item->value;
 									break;
 								case WISE_STRING:
-									strcpy(cmddata.string, item->string);
-									break;
+									CmdNotFound(cmdId, 0, handlerName, NULL, sessionId);
+									return;
 							}
 						}
 					}
@@ -611,24 +648,43 @@ void WiseAccess_Init(char *default_gwName, char *gwMac) {
 
 static char gIf_Name[32];
 static char gIf_SenHublist[2048];
-void WiseAccess_InterfaceInit(char *deviceMac, char *name) {
+void WiseAccess_InterfaceInit(char *deviceMac, char *name, int defaultItems) {
 	int d = WiseAccess_CreateDevice(deviceMac);
 	if(d != 0) return;
+    int defaultCount = 0;
 	if(gDevices[d].itemCount == 0) {
+        if(defaultCount >= defaultItems) return;
 		/*char *pos = gIf_SenHublist;
 		pos += sprintf(pos,"%s",deviceMac);
 		*(pos+2) = 0;*/
 		gInterfaceItem[0].string = gIf_SenHublist;
 		WiseAccess_AddItem(deviceMac, "/Info/SenHubList", &gInterfaceItem[0]);
+        defaultCount++;
+        if(defaultCount >= defaultItems) return;
+        
 		gInterfaceItem[1].string = gIf_SenHublist;
 		WiseAccess_AddItem(deviceMac, "/Info/Neighbor", &gInterfaceItem[1]);
+        defaultCount++;
+        if(defaultCount >= defaultItems) return;
+        
+        
 		strncpy(gIf_Name, name, sizeof(gIf_Name));
 		gInterfaceItem[2].string = gIf_Name;
 		WiseAccess_AddItem(deviceMac, "/Info/Name", &gInterfaceItem[2]);
+        defaultCount++;
+        if(defaultCount >= defaultItems) return;
 		
 		WiseAccess_AddItem(deviceMac, "/Info/Health", &gInterfaceItem[3]);
+        defaultCount++;
+        if(defaultCount >= defaultItems) return;
+        
 		WiseAccess_AddItem(deviceMac, "/Info/sw", &gInterfaceItem[4]);
+        defaultCount++;
+        if(defaultCount >= defaultItems) return;
+        
 		WiseAccess_AddItem(deviceMac, "/Info/reset", &gInterfaceItem[5]);
+        defaultCount++;
+        if(defaultCount >= defaultItems) return;
 	}
 }
 

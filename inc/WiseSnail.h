@@ -65,6 +65,8 @@ struct WiseSnail_InfoSpec{
 
 
 
+
+//GW
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Init(char *productionName, char *wanIp, unsigned char *parentMac, WiseSnail_InfoSpec *infospec, int count);
 
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_RegisterInterface(char *ifMac, char *ifName, int ifNumber, WiseSnail_InfoSpec *infospec, int count);
@@ -73,20 +75,34 @@ WISESNAIL_EXPORT int WISESNAIL_CALL WiseSnail_Connect(char *server_url, int port
 
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_RegisterSensor(char *deviceMac, char *defaultName, WiseSnail_InfoSpec *infospec, int count);
 
-WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_SenHubDisconnect(char *deviceMac);
-WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_SenHubReConnected(char *deviceMac);
-
-
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Update(char *deviceMac, WiseSnail_Data* data, int count);
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Get(char *deviceMac, char *name, WiseSnail_Data *data);
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_MainLoop(WiseSnail_SleepOneSecond sleepOneSec);
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Uninit();
 
-#define WiseSnail_Cmd_Handler WiseSnail_MainLoop
+
 #define WiseSnail_Open WiseSnail_Connect
 #define WiseSnail_Write WiseSnail_Update
 #define WiseSnail_Read WiseSnail_Get
+#define WiseSnail_Cmd_Handler WiseSnail_MainLoop
 #define WiseSnail_Close WiseSnail_Uninit
+
+//Sensor Hub
+//WISESNAIL_EXPORT char *WISESNAIL_CALL WiseSnail_JoinSenHub(char *deviceMac, char *defaultName, WiseSnail_InfoSpec *sencorSpec, int count);
+WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_SenHubDisconnect(char *deviceMac);
+WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_SenHubReConnected(char *deviceMac);
+
+
+//Service
+WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Service_Init(char *serviceGroup, char *version, WiseSnail_InfoSpec *infospec, int count);
+WISESNAIL_EXPORT char *WISESNAIL_CALL WiseSnail_Service_RegisterEntry(char *uuid, char *serveName,WiseSnail_InfoSpec *infospec, int count);
+//WISESNAIL_EXPORT char *WISESNAIL_CALL WiseSnail_JoinService(char *uuid, char *serviceGroup, char *serviceName, char *version, WiseSnail_InfoSpec *serviceSpec, int count);
+
+
+#define WiseSnail_Service_Connect WiseSnail_Connect
+#define WiseSnail_Service_Update WiseSnail_Update
+#define WiseSnail_Service_MainLoop WiseSnail_MainLoop
+#define WiseSnail_Service_Uninit WiseSnail_Uninit
 
 #ifdef __cplusplus
 }

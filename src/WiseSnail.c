@@ -8,6 +8,7 @@
 #define pthread_mutex_destroy(x)
 #endif
 #include <stdio.h>
+#include <string.h>
 #include "WiseSnail.h"
 #include "wiseconfig.h"
 #include "wisememory.h"
@@ -23,7 +24,7 @@ void WiseSnail_Init(char *productionName, char *wanIp, unsigned char *parentMac,
 		pmutex = &mutex;
         //WiseMem_Init(global_buffer, MAX_BUFFER_SIZE);
         WiseMem_Init(NULL, MAX_BUFFER_SIZE);
-		WiseAgent_Init(productionName, wanIp, parentMac, (WiseAgentInfoSpec *)infospec, count);
+		WiseAgent_Init(productionName, wanIp, parentMac, NULL, (WiseAgentInfoSpec *)infospec, count);
 	}
 }
 
@@ -39,7 +40,7 @@ int WiseSnail_Connect(char *server_url, int port, char *username, char *password
 	int ret = 0;
 	if(pmutex != NULL) {
 		pthread_mutex_lock(&mutex);
-		ret = WiseAgent_Open(server_url, port, username, password, (WiseAgentInfoSpec *)infospec, count);
+		ret = WiseAgent_Connect(server_url, port, username, password, (WiseAgentInfoSpec *)infospec, count);
 		pthread_mutex_unlock(&mutex);
 	}
 	return ret;
@@ -103,5 +104,48 @@ void WiseSnail_Uninit() {
 		pthread_mutex_unlock(&mutex);
 		pthread_mutex_destroy(&mutex);
 		pmutex = NULL;
+	}
+}
+
+//Service
+void WISESNAIL_CALL WiseSnail_Service_Init(char *serviceGroup, char *version, WiseSnail_InfoSpec *infospec, int count) {
+    if(pmutex == NULL) {
+		pthread_mutex_init(&mutex, NULL);
+		pmutex = &mutex;
+        //WiseMem_Init(global_buffer, MAX_BUFFER_SIZE);
+        WiseMem_Init(NULL, MAX_BUFFER_SIZE);
+		WiseAgent_Init(serviceGroup, serviceGroup, "", version, (WiseAgentInfoSpec *)infospec, count);
+	}
+}
+
+char *WISESNAIL_CALL WiseSnail_Service_RegisterEntry(char *uuid, char *serveName, WiseSnail_InfoSpec *infospec, int count) {
+    //printf("<%s,%d>\n",__FILE__,__LINE__);
+    if(pmutex != NULL) {
+        //printf("<%s,%d>\n",__FILE__,__LINE__);
+		pthread_mutex_lock(&mutex);
+        static char _uuid[64] = {0};
+        if(strlen(_uuid) == 0) {
+            if(uuid == NULL) {
+                //printf("<%s,%d>\n",__FILE__,__LINE__);
+                srand(time(NULL));
+                unsigned int pre = rand()&0xFFFF;
+                unsigned int id = rand();
+                snprintf(_uuid,32,"0005%04X%08X",pre, id);
+            } else {
+                int len = strlen(uuid);
+                if(len == 0) {
+                    srand(time(NULL));
+                    unsigned int pre = rand()&0xFFFF;
+                    unsigned int id = rand();
+                    snprintf(_uuid,32,"0005%04X%08X",pre, id);
+                } else {
+                    if(len > 63) len = 63;
+                    strncpy(_uuid,uuid,len);
+                }
+            }
+            WiseAgent_RegisterInterface(_uuid, serveName, 0, (WiseAgentInfoSpec *)infospec, count);
+        }
+		pthread_mutex_unlock(&mutex);
+        return _uuid;
 	}
 }

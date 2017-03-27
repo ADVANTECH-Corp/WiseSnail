@@ -61,6 +61,8 @@ do
 done
 }
 
+chmod +x configure
+chmod +x script/gen_version.sh
 
 parseArgument $@
 mkdir -p output

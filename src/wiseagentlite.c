@@ -20,7 +20,7 @@
 /*===============================================================*/
 
 #define INTERFACE "Ethernet"
-#define VERSOIN SNAIL_FACTORY_VERSION
+#define VERSION SNAIL_FACTORY_VERSION
 
 //[WillMessage]
 ///cagent/admin/000000049F0130E0/willmessage
@@ -40,24 +40,24 @@
 
 //[INFOSPEC]
 ///cagent/admin/000000049F0130E0/agentactionreq
-static const char *INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"IoTGW\":{\"%s\":{\"%s\":{\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"bn\":\"%s\",\"ver\":1},\"bn\":\"%s\",\"ver\":1},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
+static const char *INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"%s\":{\"%s\":{\"%s\":{\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"bn\":\"%s\",\"ver\":1},\"bn\":\"%s\",\"ver\":1},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ Interface[s], Interface[s], InterfaceNumber[d], SenHubList[sl], Topology[sl], Interface[s], InterfaceNumber[d], Health[d], wsnMac[s], Interface[s], gwMac[s], timestamp[d]
 
 
 //[DEVICEINFO]
 ///cagent/admin/000000049F0130E0/deviceinfo
-static const char *DEVICEINFO_JSON = "{\"susiCommData\":{\"data\":{\"IoTGW\":{\"%s\":{\"%s\":{\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"bn\":\"%s\",\"ver\":1},\"bn\":\"%s\"},\"ver\":1}},\"commCmd\":2055,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
+static const char *DEVICEINFO_JSON = "{\"susiCommData\":{\"data\":{\"%s\":{\"%s\":{\"%s\":{\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"bn\":\"%s\",\"ver\":1},\"bn\":\"%s\"},\"ver\":1}},\"commCmd\":2055,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ Interface[s], Interface[s], InterfaceNumber[d], SenHubList[sl], Topology[sl], Interface[s], InterfaceNumber[d], Health[d], wsnMac[s], Interface[s], gwMac[s], timestamp[d]
 
 
 //[Sensor Connect]
 ///cagent/admin/00170d00006063c2/agentinfoack
-static const char *SEN_CONNECT_JSON = "{\"susiCommData\":{\"devID\":\"%s\",\"hostname\":\"%s\",\"sn\":\"%s\",\"mac\":\"%s\",\"version\":\""VERSOIN"\",\"type\":\"SenHub\",\"product\":\"\",\"manufacture\":\"\",\"status\":\"1\",\"commCmd\":1,\"requestID\":30002,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
+static const char *SEN_CONNECT_JSON = "{\"susiCommData\":{\"devID\":\"%s\",\"hostname\":\"%s\",\"sn\":\"%s\",\"mac\":\"%s\",\"version\":\""VERSION"\",\"type\":\"SenHub\",\"product\":\"\",\"manufacture\":\"\",\"status\":\"1\",\"commCmd\":1,\"requestID\":30002,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ sMac[s], hostname[s]{Agriculture}, sMac[s], sMac[s], sMac[s], timestamp[d]
 
 //[Sensor Disconnect]
 ///cagent/admin/00170d00006063c2/agentinfoack
-static const char *SEN_DISCONNECT_JSON = "{\"susiCommData\":{\"devID\":\"%s\",\"hostname\":\"%s\",\"sn\":\"%s\",\"mac\":\"%s\",\"version\":\""VERSOIN"\",\"type\":\"SenHub\",\"product\":\"\",\"manufacture\":\"\",\"status\":\"0\",\"commCmd\":1,\"requestID\":30002,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
+static const char *SEN_DISCONNECT_JSON = "{\"susiCommData\":{\"devID\":\"%s\",\"hostname\":\"%s\",\"sn\":\"%s\",\"mac\":\"%s\",\"version\":\""VERSION"\",\"type\":\"SenHub\",\"product\":\"\",\"manufacture\":\"\",\"status\":\"0\",\"commCmd\":1,\"requestID\":30002,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ sMac[s], hostname[s]{Agriculture}, sMac[s], sMac[s], sMac[s], timestamp[d]
 
 
@@ -101,12 +101,16 @@ static const char *SEN_DEVINFO_SENDATA_BV_JSON = "{\"n\":\"%s\",\"bv\":%s}";
 {\"n\":\"%s\",\"bv\":%d}
 */
 
+//[Event Notify]
+static const char *EVENT_NOTIFY = "{\"susiCommData\":{\"commCmd\":2059,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d,\"eventnotify\":{%s}}}";
+
 /*=====================================================================================*/
 
 /*=====================================================================================*/
 
 /*Defining Broker IP address and port Number*/
 static char projectName[64] = {0};
+static char groupName[64] = {0};
 static char parentId[32] = {0};
 static char gatewayId[32] = {0};
 static char interfaceId[32] = {0};
@@ -114,24 +118,36 @@ static char interfaceMac[32] = {0};
 static char interfaceName[64] = {0};
 static int interfaceNumber = -1;
 static char interfaceTag[64] = {0};
-
+static char serviceVersion[64] = {0};
 static int timestamp = 160081020;
 
-void WiseAgent_Init(char *productionName, char *wanIp, unsigned char *parentMac, WiseAgentInfoSpec *infospec, int count) {
+void WiseAgent_Init(char *productionName, char *wanIp, unsigned char *parentMac, unsigned char *version, WiseAgentInfoSpec *infospec, int count) {
 	strncpy(projectName,productionName, sizeof(projectName));
 	if(parentMac != NULL) {
 		if(strlen(parentMac) == 16) {
-			snprintf(parentId,32,"%s",parentMac); //MACv6
+			snprintf(parentId,sizeof(parentId),"%s",parentMac); //MACv6
 		} else if(strlen(parentMac) > 12){
-			snprintf(parentId,32,"%s",parentMac);
+			snprintf(parentId,sizeof(parentId),"%s",parentMac);
 		} else {
-		snprintf(parentId,32,"0000%s",parentMac);
+            if(strlen(parentMac) != 0) {
+                snprintf(parentId,sizeof(parentId),"0000%s",parentMac);
+            } else {
+                snprintf(parentId,sizeof(parentId),"%s",parentMac);
+            }
 		}
 		ToUpper(parentId);
 	} else {
-		memset(parentId,0,32);
+		memset(parentId,0,sizeof(parentId));
 	}
-	SetDeviceIpAddress(wanIp);
+    
+    if(version != NULL) {
+        if(wanIp != NULL) strncpy(groupName,wanIp, sizeof(groupName));
+        else memset(groupName,0,sizeof(groupName));
+        strncpy(serviceVersion,version, sizeof(serviceVersion));
+    } else {
+        strcpy(groupName, "IoTGW");
+        if(wanIp != NULL) SetDeviceIpAddress(wanIp);
+}
 }
 
 void WiseAgent_RegisterInterface(char *ifMac, char *ifName, int ifNumber, WiseAgentInfoSpec *infospec, int count) {
@@ -181,7 +197,11 @@ void WiseAgent_RegisterInterface(char *ifMac, char *ifName, int ifNumber, WiseAg
 	sprintf(topic,WA_SUB_CBK_TOPIC, interfaceId);
 	core_subscribe(topic, 0);
 	
-	WiseAccess_InterfaceInit(interfaceId, interfaceTag);
+    if(strlen(serviceVersion) == 0) {
+        WiseAccess_InterfaceInit(interfaceId, interfaceTag, 6);
+	} else {
+        WiseAccess_InterfaceInit(interfaceId, interfaceTag, 0);
+    }
 	
 	for(index = 0 ; index < count ; index++) {
 		is = &infospec[index];
@@ -266,7 +286,7 @@ void on_update_heartbeatrate(const int heartbeatrate, const char* sessionid, con
 	WiseAccess_AssignCmd(129, -1, 0, 200, NULL, devid, sessionid, NULL, NULL);
 }
 
-static int WiseAgent_OpenBySSL(char *server_url, int port, char *username, char *password, WiseAgentInfoSpec *infospec, int count) {
+static int WiseAgent_ConnectBySSL(char *server_url, int port, char *username, char *password, WiseAgentInfoSpec *infospec, int count) {
 	int iRet = 0;
 	int i = 0;
 	char *cafile = NULL;
@@ -294,9 +314,13 @@ static int WiseAgent_OpenBySSL(char *server_url, int port, char *username, char 
 	
 	core_heartbeat_callback_set(on_query_heartbeatrate, on_update_heartbeatrate);
 
-	core_product_info_set(interfaceMac, parentId, VERSOIN, "IoTGW", "", "");
-
+    if(strlen(serviceVersion) == 0) {
+        core_product_info_set(interfaceMac, parentId, VERSION, "IoTGW", "", "");
 	core_os_info_set("SnailOS", SNAIL_MODEL, 123, interfaceMac);
+    } else {
+        core_product_info_set(interfaceMac, parentId, serviceVersion, "Service", projectName, "");
+        core_os_info_set("SnailOS", VERSION, 123, interfaceMac);
+    }
 
 	core_platform_info_set("", "", "Snail");
 
@@ -359,20 +383,20 @@ static int WiseAgent_OpenBySSL(char *server_url, int port, char *username, char 
 	sprintf(topic, WA_PUB_ACTION_TOPIC, gatewayId);
 	sprintf(senhublist, "%s", interfaceId);
 	WiseAccess_GenerateTokenCapability(interfaceId, "Info", infoString, WiseMem_Size(infoString));
-	sprintf(message,INFOSPEC_JSON, interfaceName, interfaceTag, infoString, interfaceId, interfaceName, gatewayId, timestamp++);
+	sprintf(message,INFOSPEC_JSON, groupName ,interfaceName, interfaceTag, infoString, interfaceId, interfaceName, gatewayId, timestamp++);
 	core_publish(topic, message, strlen(message), 0, 0);
 	
 	sprintf(topic, WA_PUB_DEVINFO_TOPIC, gatewayId);
 	WiseAccess_GenerateTokenDataInfo(interfaceId, "Info", infoString, WiseMem_Size(infoString));
-	sprintf(message,DEVICEINFO_JSON, interfaceName, interfaceTag, infoString, interfaceId, interfaceName, gatewayId, timestamp++);
+	sprintf(message,DEVICEINFO_JSON, groupName, interfaceName, interfaceTag, infoString, interfaceId, interfaceName, gatewayId, timestamp++);
 	core_publish(topic, message, strlen(message), 0, 0);
 
     WiseMem_Release();
 	return 1;
 }
 
-int WiseAgent_Open(char *server_url, int port, char *username, char *password, WiseAgentInfoSpec *infospec, int count) {
-	return WiseAgent_OpenBySSL(server_url, port, username, password, infospec, count);
+int WiseAgent_Connect(char *server_url, int port, char *username, char *password, WiseAgentInfoSpec *infospec, int count) {
+	return WiseAgent_ConnectBySSL(server_url, port, username, password, infospec, count);
 }
 
 int WiseAgent_PublishInterfaceInfoSpecMessage(char *gatewayId) {
@@ -383,7 +407,7 @@ int WiseAgent_PublishInterfaceInfoSpecMessage(char *gatewayId) {
 	sprintf(topic, WA_PUB_ACTION_TOPIC, gatewayId);
 	sprintf(senhublist, "%s", interfaceId);
 	WiseAccess_GenerateTokenCapability(interfaceId, "Info", infoString, WiseMem_Size(infoString));
-	sprintf(message,INFOSPEC_JSON, interfaceName, interfaceTag, infoString, interfaceId, interfaceName, gatewayId, timestamp++);
+	sprintf(message,INFOSPEC_JSON, groupName, interfaceName, interfaceTag, infoString, interfaceId, interfaceName, gatewayId, timestamp++);
 	core_publish(topic, message, strlen(message), 0, 0);
     WiseMem_Release();
 }
@@ -397,7 +421,7 @@ int WiseAgent_PublishInterfaceDeviceInfoMessage(char *gatewayId) {
     
 	sprintf(topic, WA_PUB_DEVINFO_TOPIC, gatewayId);
 	WiseAccess_GenerateTokenDataInfo(interfaceId, "Info", infoString, WiseMem_Size(infoString));
-	sprintf(message,DEVICEINFO_JSON, interfaceName, interfaceTag, infoString, interfaceId, interfaceName, gatewayId, timestamp++);
+	sprintf(message,DEVICEINFO_JSON, groupName, interfaceName, interfaceTag, infoString, interfaceId, interfaceName, gatewayId, timestamp++);
 	core_publish(topic, message, strlen(message), 0, 0);
     WiseMem_Release();
 }
@@ -425,6 +449,9 @@ int WiseAgent_PublishSensorDisconnectMessage(char *deviceId) {
 	WiseAccess_Get(deviceId, "/Info/Name", &shname);
 	sprintf(message,SEN_DISCONNECT_JSON, deviceId, shname.string, deviceId, deviceId, deviceId, timestamp++);
 	core_publish(topic, message, strlen(message), 0, 0);
+    
+    sprintf(topic,WA_SUB_CBK_TOPIC, deviceId);
+	core_subscribe(topic, 0);
     
     WiseMem_Release();
 }
@@ -628,7 +655,7 @@ void WiseAgent_Write(char *deviceMac, WiseAgentData* data, int count) {
 	} else {
 		snprintf(deviceId,32,"0017%s",deviceMac);
 	}
-	
+	printf("deviceId = %s\n", deviceId);
 	ToUpper(deviceId);
 	if(WiseAccess_FindDevice(deviceId) < 0) return;
 	
