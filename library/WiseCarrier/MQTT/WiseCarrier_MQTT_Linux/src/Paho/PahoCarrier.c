@@ -114,6 +114,7 @@ static void* ReconnectThreadStart(void *args)
 					if ((irc=MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS)
 					{
 						conn_state=FURTHER_LOST;
+                        MQTTClient_disconnect(client, 0);
 						printf("Failed to reconnect, return code %d\n", irc);    
 					}
 					else
