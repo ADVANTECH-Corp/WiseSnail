@@ -160,7 +160,7 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
 		mac = gDevices[deviceId].cliendId;
 	}
 	
-	sprintf(gatewayId, "0000%s", &mac[4]);
+	sprintf(gatewayId, "%s", mac);
 	if(strlen(handler) == 5 && strncmp(handler,"IoTGW",5) == 0) {
 		sprintf(topic, WA_PUB_ACTION_TOPIC, gatewayId);
 	} else if(strlen(handler) == 6 && strncmp(handler,"SenHub",6) == 0) {
