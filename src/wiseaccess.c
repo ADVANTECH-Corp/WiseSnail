@@ -97,6 +97,8 @@ WiseAgentInfoSpec gGwItem = {
 	.type = WISE_STRING, .name = "/GW/Name", .string = agentCfg.gwName, .setValue = SetGWName
 };
 
+static char gGwId[32] = {0};
+
 typedef struct wiseagent_device {
 	int connection;
     char cliendId[AGENT_CLIENT_ID_LEN];
@@ -148,7 +150,6 @@ void WiseAccess_RepublishSensorConnectMessage();
 void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char *name, char *sessionId, int statusCode, WiseAgent_CmdData* cmddata) {
 	char *mac;
 	char *response = NULL;
-    char gatewayId[32];
     char *topic = (char *)WiseMem_Alloc(128);
 	char *message = (char *)WiseMem_Alloc(8192);
     char *jsonvalue = (char *)WiseMem_Alloc(1024);
@@ -160,13 +161,12 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
 		mac = gDevices[deviceId].cliendId;
 	}
 	
-	sprintf(gatewayId, "%s", mac);
 	if(strlen(handler) == 5 && strncmp(handler,"IoTGW",5) == 0) {
-		sprintf(topic, WA_PUB_ACTION_TOPIC, gatewayId);
+		sprintf(topic, WA_PUB_ACTION_TOPIC, gGwId);
 	} else if(strlen(handler) == 6 && strncmp(handler,"SenHub",6) == 0) {
 		sprintf(topic, WA_PUB_ACTION_TOPIC, mac);
 	} else if(strncmp("0007",mac,4) == 0) {
-		sprintf(topic, WA_PUB_ACTION_TOPIC, gatewayId);
+		sprintf(topic, WA_PUB_ACTION_TOPIC, gGwId);
 	} else {
 		sprintf(topic, WA_PUB_ACTION_TOPIC, mac);
 	}
@@ -253,8 +253,8 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
 				if(deviceId == 0) {
                     WiseMem_Release();
 					core_platform_register();
-					WiseAgent_PublishInterfaceInfoSpecMessage(gatewayId);
-					WiseAgent_PublishInterfaceDeviceInfoMessage(gatewayId);
+					WiseAgent_PublishInterfaceInfoSpecMessage(gGwId);
+					WiseAgent_PublishInterfaceDeviceInfoMessage(gGwId);
 					WiseAccess_RepublishSensorConnectMessage();
 					response = NULL;
 				} else {
@@ -603,7 +603,7 @@ void WiseAccess_Init(char *default_gwName, char *gwMac) {
     if(strlen(agentCfg.gwName) == 0) {
         sprintf(agentCfg.gwName, "%s(%s)",default_gwName, gwMac + (strlen(gwMac) - 4));
     }
-
+    strcpy(gGwId,gwMac);
     WiseStorage_WriteAgent(&agentCfg);
 
 }

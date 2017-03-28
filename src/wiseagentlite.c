@@ -144,27 +144,25 @@ void WiseAgent_RegisterInterface(char *ifMac, char *ifName, int ifNumber, WiseAg
 	
 	snprintf(interfaceMac,32,"%s",ifMac);
 	ToUpper(interfaceMac);
-	
-	WiseAccess_Init(projectName,interfaceMac);
-	//SetDeviceMacAddress(ifMac);
-	
-	
-	
+
 	if(strlen(interfaceMac) == 16) {
 		snprintf(gatewayId,32,"%s",interfaceMac); //MACv6
 	} else if(strlen(interfaceMac) > 12){
 		snprintf(gatewayId,32,"%s",interfaceMac);
 	} else {
-	snprintf(gatewayId,32,"0000%s",interfaceMac);
+        snprintf(gatewayId,32,"0000%s",interfaceMac);
 	}
 	ToUpper(gatewayId);
+    
+    WiseAccess_Init(projectName,gatewayId);
+	//SetDeviceMacAddress(ifMac);
 	
 	if(strlen(interfaceMac) == 16) {
 		snprintf(interfaceId,32,"%s",interfaceMac); //MACv6
 	} else if(strlen(interfaceMac) > 12){
 		snprintf(interfaceId,32,"%s",interfaceMac);
 	} else {
-	snprintf(interfaceId,32,"0007%s",interfaceMac);
+        snprintf(interfaceId,32,"0007%s",interfaceMac);
 	}
 	ToUpper(interfaceId);
 	
