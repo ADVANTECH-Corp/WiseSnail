@@ -2,8 +2,8 @@
 <CodeLite_Workspace Name="WiseSnail" Database="">
   <Project Name="AdvJSON" Path="AdvJSON.project" Active="No"/>
   <Project Name="AdvLog" Path="AdvLog.project" Active="No"/>
-  <Project Name="WiseCore" Path="WiseCore.project" Active="No"/>
-  <Project Name="WiseSnail" Path="WiseSnail.project" Active="Yes"/>
+  <Project Name="WiseCore" Path="WiseCore.project" Active="Yes"/>
+  <Project Name="WiseSnail" Path="WiseSnail.project" Active="No"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>

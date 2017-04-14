@@ -13,8 +13,9 @@ function writeverion() {
 
 }
 
-
+tag=`git describe --abbrev=0 --tags`
 revision=`git rev-parse HEAD | cut -c1-8`
+
 if [ -f "$versiondef" ];then
 	source $versiondef
 else

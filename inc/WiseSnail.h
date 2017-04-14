@@ -20,6 +20,25 @@
 extern "C" {
 #endif
 
+#define IPSO_Digital_Input      3200
+#define IPSO_Digital_Output     3201
+#define IPSO_Analogue_Input     3202
+#define IPSO_Analogue_Output    3203
+#define IPSO_Generic_Sensor     3300
+#define IPSO_Illuminance_Sensor 3301
+#define IPSO_Presence_Sensor    3302
+#define IPSO_Temperature_Sensor 3303
+#define IPSO_Humidity_Sensor    3304
+#define IPSO_Power_Measurement  3305
+#define IPSO_Actuation          3306
+#define IPSO_Set_Point          3308
+#define IPSO_Load_Control       3310
+#define IPSO_Light_Control      3311
+#define IPSO_Power_Control      3312
+#define IPSO_Accelerometer      3313
+#define IPSO_Magnetometer       3314
+#define IPSO_Barometer          3315
+
 
 
 typedef enum WiseSnail_DataType
