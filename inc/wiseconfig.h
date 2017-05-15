@@ -6,6 +6,6 @@
 #define MAX_CMDS 16
 
 #define MAX_ALLOC_SIZE 8192
-#define MAX_BUFFER_SIZE 16384
+#define MAX_BUFFER_SIZE 20480
 
 #endif //WISECONFIG_H_

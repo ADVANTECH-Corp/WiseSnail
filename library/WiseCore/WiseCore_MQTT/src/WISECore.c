@@ -490,7 +490,7 @@ void _on_message_recv(const char* topic, const void* payload, const int payloadl
 }
 
 
-WISECORE_API bool core_initialize(char* strClientID, char* strHostName, char* strMAC)
+WISECORE_API bool WISECORE_CALL core_initialize(char* strClientID, char* strHostName, char* strMAC)
 {
 	if(!strClientID)
 	{
@@ -528,7 +528,7 @@ WISECORE_API bool core_initialize(char* strClientID, char* strHostName, char* st
 	return true;
 }
 
-WISECORE_API void core_uninitialize()
+WISECORE_API void WISECORE_CALL core_uninitialize()
 {
 	g_iErrorCode = core_success;
 	if(g_bInited)
@@ -539,7 +539,7 @@ WISECORE_API void core_uninitialize()
 	g_tick = 0;
 }
 
-WISECORE_API bool core_product_info_set(char* strSerialNum, char* strParentID, char* strVersion, char* strType, char* strProduct, char* strManufacture)
+WISECORE_API bool WISECORE_CALL core_product_info_set(char* strSerialNum, char* strParentID, char* strVersion, char* strType, char* strProduct, char* strManufacture)
 {
 	if(!g_bInited)
 	{
@@ -573,7 +573,7 @@ WISECORE_API bool core_product_info_set(char* strSerialNum, char* strParentID, c
 	return true;
 }
 
-WISECORE_API bool core_os_info_set(char* strOSName, char* strOSArch, int iTotalPhysMemKB, char* strMACs)
+WISECORE_API bool WISECORE_CALL core_os_info_set(char* strOSName, char* strOSArch, int iTotalPhysMemKB, char* strMACs)
 {
 	if(!g_bInited)
 	{
@@ -596,7 +596,7 @@ WISECORE_API bool core_os_info_set(char* strOSName, char* strOSArch, int iTotalP
 	return true;
 }
 
-WISECORE_API bool core_platform_info_set(char* strBIOSVersion, char* strPlatformName, char* strProcessorName)
+WISECORE_API bool WISECORE_CALL core_platform_info_set(char* strBIOSVersion, char* strPlatformName, char* strProcessorName)
 {
 	if(!g_bInited)
 	{
@@ -617,7 +617,7 @@ WISECORE_API bool core_platform_info_set(char* strBIOSVersion, char* strPlatform
 	return true;
 }
 
-WISECORE_API bool core_local_ip_set(char* strLocalIP)
+WISECORE_API bool WISECORE_CALL core_local_ip_set(char* strLocalIP)
 {
 	if(!g_bInited)
 	{
@@ -632,7 +632,7 @@ WISECORE_API bool core_local_ip_set(char* strLocalIP)
 	return true;
 }
 
-WISECORE_API bool core_account_bind(char* strLoginID, char* strLoginPW)
+WISECORE_API bool WISECORE_CALL core_account_bind(char* strLoginID, char* strLoginPW)
 {
 	if(!g_bInited)
 	{
@@ -650,7 +650,7 @@ WISECORE_API bool core_account_bind(char* strLoginID, char* strLoginPW)
 	return true;
 }
 
-WISECORE_API bool core_tls_set(const char *cafile, const char *capath, const char *certfile, const char *keyfile, const char *password)
+WISECORE_API bool WISECORE_CALL core_tls_set(const char *cafile, const char *capath, const char *certfile, const char *keyfile, const char *password)
 {
 	if(!g_bInited)
 	{
@@ -688,7 +688,7 @@ WISECORE_API bool core_tls_set(const char *cafile, const char *capath, const cha
 	}
 }
 
-WISECORE_API bool core_tls_psk_set(const char *psk, const char *identity, const char *ciphers)
+WISECORE_API bool WISECORE_CALL core_tls_psk_set(const char *psk, const char *identity, const char *ciphers)
 {
 	if(!g_bInited)
 	{
@@ -708,7 +708,7 @@ WISECORE_API bool core_tls_psk_set(const char *psk, const char *identity, const 
 	}
 }
 
-WISECORE_API bool core_connect(char* strServerIP, int iServerPort, char* strConnID, char* strConnPW)
+WISECORE_API bool WISECORE_CALL core_connect(char* strServerIP, int iServerPort, char* strConnID, char* strConnPW)
 {
 	if(!g_bInited)
 	{
@@ -739,7 +739,7 @@ WISECORE_API bool core_connect(char* strServerIP, int iServerPort, char* strConn
 	}
 }
 
-WISECORE_API void core_disconnect(bool bForce)
+WISECORE_API void WISECORE_CALL core_disconnect(bool bForce)
 {
 	g_iErrorCode = core_success;
 	if(!g_bInited)
@@ -755,7 +755,7 @@ WISECORE_API void core_disconnect(bool bForce)
 	return;
 }
 
-WISECORE_API bool core_connection_callback_set(CORE_CONNECTED_CALLBACK on_connect, CORE_LOSTCONNECTED_CALLBACK on_lostconnect, CORE_DISCONNECT_CALLBACK on_disconnect, CORE_MESSAGE_RECV_CALLBACK on_msg_recv)
+WISECORE_API bool WISECORE_CALL core_connection_callback_set(CORE_CONNECTED_CALLBACK on_connect, CORE_LOSTCONNECTED_CALLBACK on_lostconnect, CORE_DISCONNECT_CALLBACK on_disconnect, CORE_MESSAGE_RECV_CALLBACK on_msg_recv)
 {
 	if(!g_bInited)
 	{
@@ -772,7 +772,7 @@ WISECORE_API bool core_connection_callback_set(CORE_CONNECTED_CALLBACK on_connec
 	return true;
 }
 
-WISECORE_API bool core_action_callback_set(CORE_RENAME_CALLBACK on_rename, CORE_UPDATE_CALLBACK on_update)
+WISECORE_API bool WISECORE_CALL core_action_callback_set(CORE_RENAME_CALLBACK on_rename, CORE_UPDATE_CALLBACK on_update)
 {
 	if(!g_bInited)
 	{
@@ -787,7 +787,7 @@ WISECORE_API bool core_action_callback_set(CORE_RENAME_CALLBACK on_rename, CORE_
 	return true;
 }
 
-WISECORE_API bool core_action_response(const int cmdid, const char * sessoinid, bool success, const char* devid)
+WISECORE_API bool WISECORE_CALL core_action_response(const int cmdid, const char * sessoinid, bool success, const char* devid)
 {
 	if(!g_bInited)
 	{
@@ -819,7 +819,7 @@ WISECORE_API bool core_action_response(const int cmdid, const char * sessoinid, 
 	}
 }
 
-WISECORE_API bool core_server_reconnect_callback_set(CORE_SERVER_RECONNECT_CALLBACK on_server_reconnect)
+WISECORE_API bool WISECORE_CALL core_server_reconnect_callback_set(CORE_SERVER_RECONNECT_CALLBACK on_server_reconnect)
 {
 	if(!g_bInited)
 	{
@@ -833,7 +833,7 @@ WISECORE_API bool core_server_reconnect_callback_set(CORE_SERVER_RECONNECT_CALLB
 	return true;
 }
 
-WISECORE_API bool core_iot_callback_set(CORE_GET_CAPABILITY_CALLBACK on_get_capability, CORE_START_REPORT_CALLBACK on_start_report, CORE_STOP_REPORT_CALLBACK on_stop_report)
+WISECORE_API bool WISECORE_CALL core_iot_callback_set(CORE_GET_CAPABILITY_CALLBACK on_get_capability, CORE_START_REPORT_CALLBACK on_start_report, CORE_STOP_REPORT_CALLBACK on_stop_report)
 {
 	if(!g_bInited)
 	{
@@ -849,7 +849,7 @@ WISECORE_API bool core_iot_callback_set(CORE_GET_CAPABILITY_CALLBACK on_get_capa
 	return true;
 }
 
-WISECORE_API bool core_time_tick_callback_set(CORE_GET_TIME_TICK_CALLBACK get_time_tick)
+WISECORE_API bool WISECORE_CALL core_time_tick_callback_set(CORE_GET_TIME_TICK_CALLBACK get_time_tick)
 {
 	if(!g_bInited)
 	{
@@ -862,7 +862,7 @@ WISECORE_API bool core_time_tick_callback_set(CORE_GET_TIME_TICK_CALLBACK get_ti
 	return true;
 }
 
-WISECORE_API bool core_heartbeat_callback_set(CORE_QUERY_HEARTBEATRATE_CALLBACK on_query_heartbeatrate, CORE_UPDATE_HEARTBEATRATE_CALLBACK on_update_heartbeatrate)
+WISECORE_API bool WISECORE_CALL core_heartbeat_callback_set(CORE_QUERY_HEARTBEATRATE_CALLBACK on_query_heartbeatrate, CORE_UPDATE_HEARTBEATRATE_CALLBACK on_update_heartbeatrate)
 {
 	if(!g_bInited)
 	{
@@ -877,7 +877,7 @@ WISECORE_API bool core_heartbeat_callback_set(CORE_QUERY_HEARTBEATRATE_CALLBACK 
 	return true;
 }
 
-WISECORE_API bool core_heartbeatratequery_response(const int heartbeatrate, const char * sessoinid, const char* devid)
+WISECORE_API bool WISECORE_CALL core_heartbeatratequery_response(const int heartbeatrate, const char * sessoinid, const char* devid)
 {
 	if(!g_bInited)
 	{
@@ -904,7 +904,7 @@ WISECORE_API bool core_heartbeatratequery_response(const int heartbeatrate, cons
 	}
 }
 
-WISECORE_API bool core_publish(char const * topic, void * pkt, long pktlength, int retain, int qos)
+WISECORE_API bool WISECORE_CALL core_publish(char const * topic, void * pkt, long pktlength, int retain, int qos)
 {
 	if(!g_bInited)
 	{
@@ -942,7 +942,7 @@ WISECORE_API bool core_publish(char const * topic, void * pkt, long pktlength, i
 	}
 }
 
-WISECORE_API bool core_device_register()
+WISECORE_API bool WISECORE_CALL core_device_register()
 {
 	if(!g_bInited)
 	{
@@ -967,7 +967,7 @@ WISECORE_API bool core_device_register()
 	return _send_agent_connect(&g_tHandleCtx);
 }
 
-WISECORE_API bool core_platform_register()
+WISECORE_API bool WISECORE_CALL core_platform_register()
 {
 	if(!g_bInited)
 	{
@@ -984,7 +984,7 @@ WISECORE_API bool core_platform_register()
 	return _send_os_info(&g_tHandleCtx);
 }
 
-WISECORE_API bool core_heartbeat_send()
+WISECORE_API bool WISECORE_CALL core_heartbeat_send()
 {
 	if(!g_bInited)
 	{
@@ -1011,7 +1011,7 @@ WISECORE_API bool core_heartbeat_send()
 	}
 }
 
-WISECORE_API bool core_subscribe(char const * topic, int qos)
+WISECORE_API bool WISECORE_CALL core_subscribe(char const * topic, int qos)
 {
 	if(!g_bInited)
 	{
@@ -1037,7 +1037,7 @@ WISECORE_API bool core_subscribe(char const * topic, int qos)
 	}
 }
 
-WISECORE_API bool core_unsubscribe(char const * topic)
+WISECORE_API bool WISECORE_CALL core_unsubscribe(char const * topic)
 {
 	if(!g_bInited)
 	{
@@ -1064,7 +1064,7 @@ WISECORE_API bool core_unsubscribe(char const * topic)
 	}
 }
 
-WISECORE_API bool core_address_get(char *address)
+WISECORE_API bool WISECORE_CALL core_address_get(char *address)
 {
 	if(!g_bInited)
 	{
@@ -1091,7 +1091,7 @@ WISECORE_API bool core_address_get(char *address)
 
 }
 
-WISECORE_API const char* core_error_string_get()
+WISECORE_API const char* WISECORE_CALL core_error_string_get()
 {
 	switch(g_iErrorCode){
 		case core_success:

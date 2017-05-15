@@ -15,14 +15,19 @@ LIBS2=-lpthread -lrt -lWiseSnail -lWiseCore_MQTT -lWiseCarrier_MQTT_Mosquitto -l
 CFLAGS=-g
 LDFLAGS=
 
-ProgramName=test
+TEST_ProgramName=test
+TEST_DEPEND=test.o
 
-DEPEND=test.o
+SERVICE_ProgramName=service
+SERVICE_DEPEND=service.o
+
+all: $(TEST_ProgramName) $(SERVICE_ProgramName)
+
+$(TEST_ProgramName): $(TEST_DEPEND)
+	$(CC) -o $@ $^ $(CFLAGS) $(INCPATH) $(LIBPATH) $(LIBS) $(LDFLAGS)
 
 
-all: $(ProgramName)
-
-$(ProgramName): $(DEPEND)
+$(SERVICE_ProgramName): $(SERVICE_DEPEND)
 	$(CC) -o $@ $^ $(CFLAGS) $(INCPATH) $(LIBPATH) $(LIBS) $(LDFLAGS)
 
 .c.o:
@@ -32,4 +37,4 @@ $(ProgramName): $(DEPEND)
 	$(CC) -c $(INCPATH) $(CFLAGS) $<
 
 clean:
-	rm -rf *.o $(ProgramName)
+	rm -rf *.o $(TEST_ProgramName) $(SERVICE_ProgramName)

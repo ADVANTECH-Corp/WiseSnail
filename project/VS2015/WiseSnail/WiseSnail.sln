@@ -1,0 +1,84 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WiseSnail", "WiseSnail.vcxproj", "{73EEF7AC-2216-40D2-9457-D9B7799174D3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2F3408DC-5CF5-4283-8838-81FE85FF138C} = {2F3408DC-5CF5-4283-8838-81FE85FF138C}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WiseCarrier_PAHO", "WiseCarrier_PAHO\WiseCarrier_PAHO.vcxproj", "{E266D4EF-66B7-4636-A9DF-FAD718A358DD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BA6F493C-6452-4EA6-A23A-6AB082779F01} = {BA6F493C-6452-4EA6-A23A-6AB082779F01}
+		{BC775A52-6EBE-4BFF-AA68-F69F3403C955} = {BC775A52-6EBE-4BFF-AA68-F69F3403C955}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AdvPlatform", "AdvPlatform\AdvPlatform.vcxproj", "{BC775A52-6EBE-4BFF-AA68-F69F3403C955}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Paho_MQTT", "Paho_MQTT\Paho_MQTT.vcxproj", "{BA6F493C-6452-4EA6-A23A-6AB082779F01}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WiseCore_MQTT", "WiseCore_MQTT\WiseCore_MQTT.vcxproj", "{2F3408DC-5CF5-4283-8838-81FE85FF138C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{306238C5-56D3-4647-9356-7152F32E2193} = {306238C5-56D3-4647-9356-7152F32E2193}
+		{E266D4EF-66B7-4636-A9DF-FAD718A358DD} = {E266D4EF-66B7-4636-A9DF-FAD718A358DD}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj", "{606E3DF0-0F9B-4D97-875F-13578F6DD928}"
+	ProjectSection(ProjectDependencies) = postProject
+		{73EEF7AC-2216-40D2-9457-D9B7799174D3} = {73EEF7AC-2216-40D2-9457-D9B7799174D3}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WiseCarrier_MOSQUITTO", "WiseCarrier_MOSQUITTO\WiseCarrier_MOSQUITTO.vcxproj", "{306238C5-56D3-4647-9356-7152F32E2193}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BC775A52-6EBE-4BFF-AA68-F69F3403C955} = {BC775A52-6EBE-4BFF-AA68-F69F3403C955}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Service", "Service\Service.vcxproj", "{9FC52D8C-D177-49B9-8866-899B9CE7CE02}"
+	ProjectSection(ProjectDependencies) = postProject
+		{73EEF7AC-2216-40D2-9457-D9B7799174D3} = {73EEF7AC-2216-40D2-9457-D9B7799174D3}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{73EEF7AC-2216-40D2-9457-D9B7799174D3}.Debug|x86.ActiveCfg = Debug|Win32
+		{73EEF7AC-2216-40D2-9457-D9B7799174D3}.Debug|x86.Build.0 = Debug|Win32
+		{73EEF7AC-2216-40D2-9457-D9B7799174D3}.Release|x86.ActiveCfg = Release|Win32
+		{73EEF7AC-2216-40D2-9457-D9B7799174D3}.Release|x86.Build.0 = Release|Win32
+		{E266D4EF-66B7-4636-A9DF-FAD718A358DD}.Debug|x86.ActiveCfg = Debug|Win32
+		{E266D4EF-66B7-4636-A9DF-FAD718A358DD}.Debug|x86.Build.0 = Debug|Win32
+		{E266D4EF-66B7-4636-A9DF-FAD718A358DD}.Release|x86.ActiveCfg = Release|Win32
+		{E266D4EF-66B7-4636-A9DF-FAD718A358DD}.Release|x86.Build.0 = Release|Win32
+		{BC775A52-6EBE-4BFF-AA68-F69F3403C955}.Debug|x86.ActiveCfg = Debug|Win32
+		{BC775A52-6EBE-4BFF-AA68-F69F3403C955}.Debug|x86.Build.0 = Debug|Win32
+		{BC775A52-6EBE-4BFF-AA68-F69F3403C955}.Release|x86.ActiveCfg = Release|Win32
+		{BC775A52-6EBE-4BFF-AA68-F69F3403C955}.Release|x86.Build.0 = Release|Win32
+		{BA6F493C-6452-4EA6-A23A-6AB082779F01}.Debug|x86.ActiveCfg = Debug|Win32
+		{BA6F493C-6452-4EA6-A23A-6AB082779F01}.Debug|x86.Build.0 = Debug|Win32
+		{BA6F493C-6452-4EA6-A23A-6AB082779F01}.Release|x86.ActiveCfg = Release|Win32
+		{BA6F493C-6452-4EA6-A23A-6AB082779F01}.Release|x86.Build.0 = Release|Win32
+		{2F3408DC-5CF5-4283-8838-81FE85FF138C}.Debug|x86.ActiveCfg = Debug|Win32
+		{2F3408DC-5CF5-4283-8838-81FE85FF138C}.Debug|x86.Build.0 = Debug|Win32
+		{2F3408DC-5CF5-4283-8838-81FE85FF138C}.Release|x86.ActiveCfg = Release|Win32
+		{2F3408DC-5CF5-4283-8838-81FE85FF138C}.Release|x86.Build.0 = Release|Win32
+		{606E3DF0-0F9B-4D97-875F-13578F6DD928}.Debug|x86.ActiveCfg = Debug|Win32
+		{606E3DF0-0F9B-4D97-875F-13578F6DD928}.Debug|x86.Build.0 = Debug|Win32
+		{606E3DF0-0F9B-4D97-875F-13578F6DD928}.Release|x86.ActiveCfg = Release|Win32
+		{606E3DF0-0F9B-4D97-875F-13578F6DD928}.Release|x86.Build.0 = Release|Win32
+		{306238C5-56D3-4647-9356-7152F32E2193}.Debug|x86.ActiveCfg = Debug|Win32
+		{306238C5-56D3-4647-9356-7152F32E2193}.Debug|x86.Build.0 = Debug|Win32
+		{306238C5-56D3-4647-9356-7152F32E2193}.Release|x86.ActiveCfg = Release|Win32
+		{306238C5-56D3-4647-9356-7152F32E2193}.Release|x86.Build.0 = Release|Win32
+		{9FC52D8C-D177-49B9-8866-899B9CE7CE02}.Debug|x86.ActiveCfg = Debug|Win32
+		{9FC52D8C-D177-49B9-8866-899B9CE7CE02}.Debug|x86.Build.0 = Debug|Win32
+		{9FC52D8C-D177-49B9-8866-899B9CE7CE02}.Release|x86.ActiveCfg = Release|Win32
+		{9FC52D8C-D177-49B9-8866-899B9CE7CE02}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

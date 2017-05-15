@@ -12,11 +12,10 @@
 #include "wiseagentlite.h"
 
 #define INFO_SW "1.0.00"
-#define NET_VERSION(m,x,y,z) #m"."#x"."#y"."#z
-#define NET_SW NET_VERSION(VER_MAJOR,VER_MINOR,VER_BUILD,VER_FIX)
+#define NET_SW "2.0.0.0"
 
 void WiseAccess_Init(char *default_gwName, char *gwMac);
-void WiseAccess_InterfaceInit(char *deviceMac, char *name);
+void WiseAccess_InterfaceInit(char *deviceMac, char *name, int defaultItems);
 void WiseAccess_SensorInit(char *deviceMac, char *shName);
 void WiseAccess_SetInfoSpec(char *deviceMac, const char *infospec, int len);
 void WiseAccess_ConnectionStatus(char *deviceMac, int status);

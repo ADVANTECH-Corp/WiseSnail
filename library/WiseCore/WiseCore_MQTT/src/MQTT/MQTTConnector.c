@@ -7,6 +7,18 @@
 /****************************************************************************/
 #include "WISEConnector.h"
 #include "WiseCarrier_MQTT.h"
+#define USE_PAHO
+//#define USE_MOSQUITTO
+
+#if defined(WIN32)
+#ifdef USE_PAHO
+#pragma comment(lib, "WiseCarrier_PAHO.lib")
+#endif
+#ifdef USE_MOSQUITTO
+#pragma comment(lib, "WiseCarrier_MOSQUITTO.lib")
+#endif
+#endif
+
 #include "MQTTConnector.h"
 #include <stdio.h>
 
