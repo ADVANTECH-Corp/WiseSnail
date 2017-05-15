@@ -9,13 +9,16 @@
 #include <stdio.h>
 #include <string.h>
 #include "mosquitto.h"
+#if defined(WIN32)
+#pragma comment(lib, "mosquitto.lib")
+#endif
 #include "susiaccess_def.h"
 #include "WiseCarrier_MQTT.h"
 #include "topic.h"
 #include <pthread.h>
 #include <sys/time.h>
 
-pthread_mutex_t g_connect_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t g_connect_mutex;
 pthread_mutex_t *g_connect_mutex_p = &g_connect_mutex;
 
 static char g_version[32] = {0};
@@ -418,7 +421,7 @@ bool _disconnect(mosq_car_t *pmosq, bool bForce)
 }
 
 
-WISE_CARRIER_API const char * WiCar_MQTT_LibraryTag()
+WISE_CARRIER_API const char * WISE_CARRIER_CALL WiCar_MQTT_LibraryTag()
 {
 	int major=0, minor=0, revision=0;
 	mosquitto_lib_version(&major, &minor, &revision);
@@ -426,7 +429,7 @@ WISE_CARRIER_API const char * WiCar_MQTT_LibraryTag()
 	return g_version;
 }
 
-WISE_CARRIER_API bool WiCar_MQTT_Init(WICAR_CONNECT_CB on_connect, WICAR_DISCONNECT_CB on_disconnect, void *userdata)
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_Init(WICAR_CONNECT_CB on_connect, WICAR_DISCONNECT_CB on_disconnect, void *userdata)
 {
 	if(g_mosq)
 	{
@@ -439,6 +442,9 @@ WISE_CARRIER_API bool WiCar_MQTT_Init(WICAR_CONNECT_CB on_connect, WICAR_DISCONN
 		return false;
 	}
 
+	pthread_mutex_init(g_connect_mutex_p, NULL);
+	
+
 	memset(g_mosq, 0, sizeof(mosq_car_t));
 
 	g_mosq->on_connect_cb = on_connect;
@@ -450,7 +456,7 @@ WISE_CARRIER_API bool WiCar_MQTT_Init(WICAR_CONNECT_CB on_connect, WICAR_DISCONN
 
 }
 
-WISE_CARRIER_API void WiCar_MQTT_Uninit()
+WISE_CARRIER_API void WISE_CARRIER_CALL WiCar_MQTT_Uninit()
 {
 	if(g_mosq)
 	{
@@ -477,7 +483,7 @@ WISE_CARRIER_API void WiCar_MQTT_Uninit()
 
 }
 
-WISE_CARRIER_API bool WiCar_MQTT_SetWillMsg(const char* topic, const void *msg, int msglen)
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_SetWillMsg(const char* topic, const void *msg, int msglen)
 {
 	if(!g_mosq){
 		g_iErrorCode = mc_err_no_init;
@@ -503,7 +509,7 @@ WISE_CARRIER_API bool WiCar_MQTT_SetWillMsg(const char* topic, const void *msg, 
 
 }
 
-WISE_CARRIER_API bool WiCar_MQTT_SetAuth(char const * username, char const * password)
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_SetAuth(char const * username, char const * password)
 {
 	if(!g_mosq){
 		g_iErrorCode = mc_err_no_init;
@@ -516,7 +522,7 @@ WISE_CARRIER_API bool WiCar_MQTT_SetAuth(char const * username, char const * pas
 	return true;
 }
 
-WISE_CARRIER_API bool WiCar_MQTT_SetKeepLive(int keepalive)
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_SetKeepLive(int keepalive)
 {
 	if(!g_mosq){
 		g_iErrorCode = mc_err_no_init;
@@ -528,7 +534,7 @@ WISE_CARRIER_API bool WiCar_MQTT_SetKeepLive(int keepalive)
 	return true;
 }
 
-WISE_CARRIER_API bool WiCar_MQTT_SetTls(const char *cafile, const char *capath, const char *certfile, const char *keyfile, const char* password)
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_SetTls(const char *cafile, const char *capath, const char *certfile, const char *keyfile, const char* password)
 {
 	if(!g_mosq){
 		g_iErrorCode = mc_err_no_init;
@@ -549,7 +555,7 @@ WISE_CARRIER_API bool WiCar_MQTT_SetTls(const char *cafile, const char *capath, 
 	return true;
 }
 
-WISE_CARRIER_API bool WiCar_MQTT_SetTlsPsk(const char *psk, const char *identity, const char *ciphers)
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_SetTlsPsk(const char *psk, const char *identity, const char *ciphers)
 {
 	if(!g_mosq){
 		g_iErrorCode = mc_err_no_init;
@@ -566,7 +572,7 @@ WISE_CARRIER_API bool WiCar_MQTT_SetTlsPsk(const char *psk, const char *identity
 	return true;
 }
 
-WISE_CARRIER_API bool WiCar_MQTT_Connect(const char* address, int port, const char* clientId, WICAR_LOSTCONNECT_CB on_lostconnect)
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_Connect(const char* address, int port, const char* clientId, WICAR_LOSTCONNECT_CB on_lostconnect)
 {
 	struct mosquitto *mosq = NULL;
 	if(!g_mosq){
@@ -607,7 +613,7 @@ WISE_CARRIER_API bool WiCar_MQTT_Connect(const char* address, int port, const ch
 
 }
 
-WISE_CARRIER_API bool WiCar_MQTT_Reconnect()
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_Reconnect()
 {
 	bool bRet = false;
 	if(!g_mosq){
@@ -629,7 +635,7 @@ WISE_CARRIER_API bool WiCar_MQTT_Reconnect()
 	return bRet;
 }
 
-WISE_CARRIER_API bool WiCar_MQTT_Disconnect(int force)
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_Disconnect(int force)
 {
 	if(!g_mosq){
 		g_iErrorCode = mc_err_no_init;
@@ -658,7 +664,7 @@ WISE_CARRIER_API bool WiCar_MQTT_Disconnect(int force)
 		return false;
 }
 
-WISE_CARRIER_API bool WiCar_MQTT_Publish(const char* topic, const void *msg, int msglen, int retain, int qos)
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_Publish(const char* topic, const void *msg, int msglen, int retain, int qos)
 {
 	int result = MOSQ_ERR_SUCCESS;
 	struct mqttmsg* mqttmsg = NULL;
@@ -696,7 +702,7 @@ WISE_CARRIER_API bool WiCar_MQTT_Publish(const char* topic, const void *msg, int
 	return result==MOSQ_ERR_SUCCESS?true:false;
 }
 
-WISE_CARRIER_API bool WiCar_MQTT_Subscribe(const char* topic, int qos, WICAR_MESSAGE_CB on_recieve)
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_Subscribe(const char* topic, int qos, WICAR_MESSAGE_CB on_recieve)
 {
 	int result = MOSQ_ERR_SUCCESS;
 	topic_entry_st *ptopic = NULL;
@@ -728,7 +734,7 @@ WISE_CARRIER_API bool WiCar_MQTT_Subscribe(const char* topic, int qos, WICAR_MES
 	return result==MOSQ_ERR_SUCCESS?true:false;
 }
 
-WISE_CARRIER_API bool WiCar_MQTT_UnSubscribe(const char* topic)
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_UnSubscribe(const char* topic)
 {
 	int result = MOSQ_ERR_SUCCESS;
 	topic_entry_st *ptopic = NULL;
@@ -746,7 +752,7 @@ WISE_CARRIER_API bool WiCar_MQTT_UnSubscribe(const char* topic)
 	return result==MOSQ_ERR_SUCCESS?true:false;
 }
 
-WISE_CARRIER_API bool WiCar_MQTT_GetLocalIP(const char *address)
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_GetLocalIP(const char *address)
 {
 	/*int sockfd = -1;
 	char strAddr[16] = {0};
@@ -772,7 +778,7 @@ WISE_CARRIER_API bool WiCar_MQTT_GetLocalIP(const char *address)
 	return false;
 }
 
-WISE_CARRIER_API const char *WiCar_MQTT_GetCurrentErrorString()
+WISE_CARRIER_API const char * WISE_CARRIER_CALL WiCar_MQTT_GetCurrentErrorString()
 {
 	switch(g_iErrorCode){
 		case mc_err_success:

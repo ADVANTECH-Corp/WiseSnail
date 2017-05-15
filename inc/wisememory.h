@@ -10,6 +10,8 @@ void *__WiseMem_Alloc(int len, char *file, int line);
 #define WiseMem_Alloc(len) __WiseMem_Alloc(len, __FILE__,__LINE__)
 
 int WiseMem_Size(void *address);
+int WiseMem_Remain();
+int WiseMem_Current();
 void WiseMem_Release();
 void WiseMem_Destory();
 

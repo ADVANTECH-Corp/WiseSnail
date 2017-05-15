@@ -53,6 +53,7 @@ void WiseAgent_SenHubReConnected(char *deviceMac);
 
 
 void WiseAgent_Write(char *deviceMac, WiseAgentData* data, int count);
+
 void WiseAgent_Get(char *deviceMac, char *name, WiseAgentData *data);
 void WiseAgent_Cmd_Handler();
 void WiseAgent_Close();

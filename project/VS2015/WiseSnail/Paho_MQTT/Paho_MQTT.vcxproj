@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{BA6F493C-6452-4EA6-A23A-6AB082779F01}</ProjectGuid>
+    <RootNamespace>Paho</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.25431.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\openssl-1.0.1h.win32\include;$(SolutionDir)Library3rdParty\Paho_Client\org.eclipse.paho.mqtt.c-1.0.3\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;ssleay32.lib;libeay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\openssl-1.0.1h.win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\openssl-1.0.1h.win32\include;$(SolutionDir)Library3rdParty\Paho_Client\org.eclipse.paho.mqtt.c-1.0.3\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\openssl-1.0.1h.win32\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\Clients.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\Heap.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\LinkedList.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\Log.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\Messages.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTClient.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTPacket.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTPacketOut.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTPersistence.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTPersistenceDefault.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTProtocolClient.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTProtocolOut.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTVersion.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\Socket.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\SocketBuffer.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\SSLSocket.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\StackTrace.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\Thread.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\Tree.c" />
+    <ClCompile Include="org.eclipse.paho.mqtt.c-1.0.3\src\utf-8.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\Clients.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\Heap.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\LinkedList.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\Log.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\Messages.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTClient.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTClientPersistence.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTPacket.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTPacketOut.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTPersistence.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTPersistenceDefault.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTProtocol.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTProtocolClient.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\MQTTProtocolOut.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\Socket.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\SocketBuffer.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\SSLSocket.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\StackTrace.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\Thread.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\Tree.h" />
+    <ClInclude Include="org.eclipse.paho.mqtt.c-1.0.3\src\utf-8.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

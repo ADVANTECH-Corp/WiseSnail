@@ -3,13 +3,8 @@
 
 #if defined(WIN32)
 	#pragma once
-	#ifdef WISESNAIL_EXPORTS
-		#define WISESNAIL_CALL __stdcall
-		#define WISESNAIL_EXPORT __declspec(dllexport)
-	#else
-		#define WISESNAIL_CALL __stdcall
-		#define WISESNAIL_EXPORT
-	#endif
+	#define WISESNAIL_CALL __stdcall
+	#define WISESNAIL_EXPORT __declspec(dllexport)
 	#define __func__ __FUNCTION__
 #else
 	#define WISESNAIL_CALL
@@ -29,7 +24,15 @@ typedef enum WiseSnail_DataType
 	WISE_FLOAT,
 	WISE_STRING,
 	WISE_BOOL,
+    WISE_CUSTOMIZE,
 }WiseSnail_DataType;
+
+typedef enum WiseSnail_FormatType
+{
+    WISE_RAW = 0,
+    WISE_BASE64,
+}WiseSnail_FormatType;
+
 
 typedef struct WiseSnail_InfoSpec WiseSnail_InfoSpec;
 
@@ -40,6 +43,9 @@ typedef struct WiseSnail_Data{
 		double value;
         char *string;
     };
+    WiseSnail_FormatType format;
+    
+    //hidden
 	char *clientId;
 	WiseSnail_InfoSpec *info;
 } WiseSnail_Data;
@@ -54,13 +60,14 @@ struct WiseSnail_InfoSpec{
 	char *unit;
 	union {
         double value;
-		char *string;
+        char *string;
 	};
     double min;
     double max;
 	char *resourcetype;
 	WiseSnail_SetValue setValue;
 	WiseSnail_GetValue getValue;
+    WiseSnail_FormatType format;
 };
 
 
@@ -76,6 +83,7 @@ WISESNAIL_EXPORT int WISESNAIL_CALL WiseSnail_Connect(char *server_url, int port
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_RegisterSensor(char *deviceMac, char *defaultName, WiseSnail_InfoSpec *infospec, int count);
 
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Update(char *deviceMac, WiseSnail_Data* data, int count);
+
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Get(char *deviceMac, char *name, WiseSnail_Data *data);
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_MainLoop(WiseSnail_SleepOneSecond sleepOneSec);
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Uninit();

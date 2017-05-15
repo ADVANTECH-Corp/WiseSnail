@@ -1,12 +1,12 @@
 #include <stdio.h>
 
 #include <string.h>   //strncpy
-#include <sys/socket.h>
-#include <sys/ioctl.h>
-#include <net/if.h>   //ifreq
 #include <unistd.h>   //close
 
 #include "WiseSnail.h"
+#if defined(WIN32)
+#pragma comment(lib, "WiseSnail.lib")
+#endif
 
 //#define SERVER_URL            "dev-wisepaas.cloudapp.net"
 //#define SERVER_URL            "dev-wisepaas-ssl.cloudapp.net"
@@ -207,37 +207,11 @@ WiseSnail_Data data[] = {
 		}
 };
 
-void GetSystemMac(unsigned char *mac, int len) {
-	int fd;
-    struct ifreq ifr;
-    char *iface = "eth2";
-
-
-    memset(&ifr, 0, sizeof(ifr));
-
-    fd = socket(AF_INET, SOCK_DGRAM, 0);
-
-    ifr.ifr_addr.sa_family = AF_INET;
-    strncpy(ifr.ifr_name , iface , IFNAMSIZ-1);
-
-    if (0 == ioctl(fd, SIOCGIFHWADDR, &ifr)) {
-        //mac = (unsigned char *)ifr.ifr_hwaddr.sa_data;
-		memcpy(mac,(unsigned char *)ifr.ifr_hwaddr.sa_data,len);
-    }
-
-    close(fd);
-
-    return;
-}
-
 void sleepOneSecond() {
 	sleep(1);
 }
 
 int main() {
-	
-	unsigned char macAddressVal[6];
-	GetSystemMac(macAddressVal, 6);
 
 	WiseSnail_Init("IotGW",NULL, NULL, NULL, 0);
 	WiseSnail_RegisterInterface("000E4CAB1234", "Ethernet", -1, interface1, 1);

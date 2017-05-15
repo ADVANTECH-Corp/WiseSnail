@@ -10,13 +10,8 @@
 
 #if defined(WIN32)
 	#pragma once
-	#ifdef ADVPLAT_EXPORTS
-		#define ADVPLAT_CALL __stdcall
-		#define ADVPLAT_EXPORT __declspec(dllexport)
-	#else
-		#define ADVPLAT_CALL __stdcall
-		#define ADVPLAT_EXPORT
-	#endif
+	#define ADVPLAT_CALL __stdcall
+	#define ADVPLAT_EXPORT __declspec(dllexport)
 #else
 	#define ADVPLAT_CALL
 	#define ADVPLAT_EXPORT
