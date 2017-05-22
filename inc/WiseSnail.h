@@ -55,12 +55,18 @@ typedef enum WiseSnail_FormatType
 
 typedef struct WiseSnail_InfoSpec WiseSnail_InfoSpec;
 
+typedef struct WiseSnail_RAW {
+    char *data;
+    int len;
+} WiseSnail_RAW;
+
 typedef struct WiseSnail_Data{
     WiseSnail_DataType type;
     char *name;
     union {
 		double value;
         char *string;
+        WiseSnail_RAW *raw;
     };
     WiseSnail_FormatType format;
     
@@ -80,6 +86,7 @@ struct WiseSnail_InfoSpec{
 	union {
         double value;
         char *string;
+        WiseSnail_RAW *raw;
 	};
     double min;
     double max;

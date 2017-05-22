@@ -395,7 +395,7 @@ static int WiseAgent_ConnectBySSL(char *server_url, int port, char *username, ch
 	core_publish(topic, message, strlen(message), 0, 0);
 	
 	sprintf(topic, WA_PUB_DEVINFO_TOPIC, gatewayId);
-	WiseAccess_GenerateTokenDataInfo(interfaceId, "Info", senhublist, WiseMem_Size(infoString));
+	WiseAccess_GenerateTokenDataInfo(interfaceId, "Info", senhublist, WiseMem_Size(senhublist));
     sprintf(infoString, INFO_JSON, senhublist);
 	sprintf(message,DEVICEINFO_JSON, groupName, interfaceName, interfaceId/*interfaceTag*/, infoString, interfaceId, interfaceName, gatewayId, timestamp++);
 	core_publish(topic, message, strlen(message), 0, 0);
@@ -479,6 +479,7 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
 	char *pos = senhublist;
 	char *access = "rw";
 	char deviceId[33] = {0};
+    char formatBuffer[256];
     
 	WiseAgentInfoSpec *is;
 	
@@ -505,9 +506,8 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
 				case WISE_VALUE:
                 case WISE_FLOAT:
 				case WISE_BOOL:
-					WiseAccess_AddItem(deviceId, is->name, is);
-					break;
 				case WISE_STRING:
+                case WISE_CUSTOMIZE:
 					WiseAccess_AddItem(deviceId, is->name, is);
 					break;
 				default:
@@ -529,7 +529,7 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
     netString = (char *)WiseMem_Alloc(1024);
     actionString = (char *)WiseMem_Alloc(1024);
 	pos = senhublist;
-
+    
 	for(index = 0 ; index < count ; index++) {
 		is = &infospec[index];
 		if(is->name[0] != '/') {
@@ -546,7 +546,6 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
 					}
 				}
 			}
-
 			switch(is->type) {
 				case WISE_VALUE:
 					WiseAccess_AddItem(deviceId, is->name, is);
@@ -562,16 +561,15 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
 					break;
 				case WISE_STRING:
                     WiseAccess_AddItem(deviceId, is->name, is);
-                    pos += sprintf(pos, SEN_INFOSPEC_SENDATA_SV_JSON, is->name, NULL_STRING(is->unit), is->string, (int)is->min, (int)is->max, access, NULL_STRING(is->resourcetype));
+                    pos += sprintf(pos, SEN_INFOSPEC_SENDATA_SV_JSON, is->name, NULL_STRING(is->unit), NULL_STRING(is->string), (int)is->min, (int)is->max, access, NULL_STRING(is->resourcetype));
                     break;
                 case WISE_CUSTOMIZE:
 					WiseAccess_AddItem(deviceId, is->name, is);
                     switch(is->format) {
-                        case WISE_BASE64:
-                            pos += sprintf(pos, SEN_INFOSPEC_SENDATA_CV_JSON, is->name, NULL_STRING(is->unit), is->string, (int)is->min, (int)is->max, access, NULL_STRING(is->resourcetype), "base64");
-                        case WISE_RAW:
                         default:
-                            pos += sprintf(pos, SEN_INFOSPEC_SENDATA_SV_JSON, is->name, NULL_STRING(is->unit), is->string, (int)is->min, (int)is->max, access, NULL_STRING(is->resourcetype));
+                        case WISE_BASE64:
+                            base64_encode_padding(formatBuffer, is->raw->data, is->raw->len);
+                            pos += sprintf(pos, SEN_INFOSPEC_SENDATA_CV_JSON, is->name, NULL_STRING(is->unit), formatBuffer, (int)is->min, (int)is->max, access, NULL_STRING(is->resourcetype), "base64");
                         break;
                     }
 					break;
@@ -648,6 +646,7 @@ void WiseAgent_Write(char *deviceMac, WiseAgentData* data, int count) {
 	WiseAgentData* d;
 	int otherInfo = 0;
 	char deviceId[33] = {0};
+    char formatBuffer[1024];
     char *topic = NULL;
 	char *message = NULL;
     char *senhublist = NULL;
@@ -688,9 +687,12 @@ void WiseAgent_Write(char *deviceMac, WiseAgentData* data, int count) {
 	message[0] = 0;
     pos = message;
 	for(index = 0 ; index < count ; index++) {
+        printf("<%s,%d>index = %d(%d)\n", __FILE__,__LINE__, index, count);
 		d = &data[index];
 		if(d->name[0] != '/') {
 			if(number != 0) pos += sprintf(pos,",");
+            
+            printf("<%s,%d>d->type = %d\n", __FILE__,__LINE__, d->type);
 			switch(d->type) {
 			case WISE_VALUE:
 				pos += sprintf(pos, SEN_DEVINFO_SENDATA_V_JSON, d->name, (int)d->value);
@@ -702,17 +704,17 @@ void WiseAgent_Write(char *deviceMac, WiseAgentData* data, int count) {
 				pos += sprintf(pos, SEN_DEVINFO_SENDATA_BV_JSON, d->name, d->value > 0 ? "true" : "false");
 				break;
 			case WISE_STRING:
-				pos += sprintf(pos, SEN_DEVINFO_SENDATA_SV_JSON, d->name, d->string);
+				pos += sprintf(pos, SEN_DEVINFO_SENDATA_SV_JSON, d->name, NULL_STRING(d->string));
 				break;
             case WISE_CUSTOMIZE:
                 switch(d->format) {
-                    case WISE_BASE64:
-                        pos += sprintf(pos, SEN_DEVINFO_SENDATA_CV_JSON, d->name, d->string, "base64");
-                    case WISE_RAW:
                     default:
-                        pos += sprintf(pos, SEN_DEVINFO_SENDATA_SV_JSON, d->name, d->string);
+                    case WISE_BASE64:
+                        base64_encode_padding(formatBuffer, d->raw->data, d->raw->len);
+                        pos += sprintf(pos, SEN_DEVINFO_SENDATA_CV_JSON, d->name, formatBuffer, "base64");
                     break;
                 }
+                break;
 			default:
 				wiseprint("Datatype error!!\n");
 				infiniteloop();

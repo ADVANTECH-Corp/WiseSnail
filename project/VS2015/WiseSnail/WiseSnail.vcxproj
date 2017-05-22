@@ -118,6 +118,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\base64.c" />
     <ClCompile Include="..\..\..\src\wiseaccess.c" />
     <ClCompile Include="..\..\..\src\wiseagentlite.c" />
     <ClCompile Include="..\..\..\src\wisememory.c" />
@@ -126,6 +127,7 @@
     <ClCompile Include="..\..\..\src\wiseutility.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\inc\base64.h" />
     <ClInclude Include="..\..\..\inc\snail_version.h" />
     <ClInclude Include="..\..\..\inc\wiseaccess.h" />
     <ClInclude Include="..\..\..\inc\wiseagentlite.h" />
