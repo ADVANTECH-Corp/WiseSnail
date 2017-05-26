@@ -605,8 +605,8 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 		
 		//find value
 		for(search = 0 ; search < *itemCount ; search++) {
-			item = items[search];
-			if(strcmp(target, item->name) == 0) {
+			item = items[search]; 
+			if(strncmp(target, item->name, strlen(item->name)) == 0) {
 				//if(WiseAccess_AssignCmd(cmdId, search, 200, item->name, sessionId, NULL)) {
 				if((gCmdHead+1)%MAX_CMDS != gCmdTail) {
 					/*cmd = &gCmds[gCmdHead];
@@ -643,7 +643,7 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 									if(*(end-1) != '\\') break;
 								} while(1);
 								len = (long)(end-start);
-								formatTag = strstr(end , "format:");
+								formatTag = strstr(end , "format");
                                 if(formatTag == 0 || strstr(end, "}") <= formatTag) {
                                     memcpy(value, start, len);
                                     value[len] = 0;
@@ -660,9 +660,9 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
                                     data.type = WISE_STRING;
                                     
                                 } else {
-                                    formatTag += 8;
+                                    formatTag += 9;
                                     do {
-                                        end = strstr(end,"\"");
+                                        end = strstr(formatTag,"\"");
                                         if(*(end-1) != '\\') break;
                                     } while(1);
                                     
