@@ -16,16 +16,14 @@ typedef enum {
    core_online = 1, 
 } lite_conn_status;
 
-#if defined(WIN32)
+#if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once
 #include <windows.h>
-#include "AdvPlatform.h"
-#pragma comment(lib, "AdvPlatform.lib")
-#define WISECORE_CALL __stdcall
-#define WISECORE_API __declspec(dllexport)
+#ifndef WISECORE_API
+	#define WISECORE_API __declspec(dllexport)
+#endif
 #else
-#define WISECORE_CALL
-#define WISECORE_API
+	#define WISECORE_API
 #endif
 
 typedef void (*CORE_CONNECTED_CALLBACK)();
@@ -60,7 +58,7 @@ extern "C" {
  * Returns:
  * 	boolean value for success or not.
  */
-WISECORE_API bool WISECORE_CALL core_initialize(char* strClientID, char* strHostName, char* strMAC);
+WISECORE_API bool core_initialize(char* strClientID, char* strHostName, char* strMAC);
 
 /* 
  * Function: core_uninitialize
@@ -73,7 +71,7 @@ WISECORE_API bool WISECORE_CALL core_initialize(char* strClientID, char* strHost
  * Returns:
  * 	None
  */
-WISECORE_API void WISECORE_CALL core_uninitialize();
+WISECORE_API void core_uninitialize();
 
 /* 
  * Function: core_product_info_set
@@ -91,7 +89,7 @@ WISECORE_API void WISECORE_CALL core_uninitialize();
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_product_info_set(char* strSerialNum, char* strParentID, char* strVersion, char* strType, char* strProduct, char* strManufacture);
+WISECORE_API bool core_product_info_set(char* strSerialNum, char* strParentID, char* strVersion, char* strType, char* strProduct, char* strManufacture);
 
 /* 
  * Function: lite_os_info_set
@@ -107,7 +105,7 @@ WISECORE_API bool WISECORE_CALL core_product_info_set(char* strSerialNum, char* 
  * Returns:
  * 	boolean value for success or not.
  */
-WISECORE_API bool WISECORE_CALL core_os_info_set(char* strOSName, char* strOSArch, int iTotalPhysMemKB, char* strMACs);
+WISECORE_API bool core_os_info_set(char* strOSName, char* strOSArch, int iTotalPhysMemKB, char* strMACs);
 
 /* 
  * Function: core_platform_info_set
@@ -122,7 +120,7 @@ WISECORE_API bool WISECORE_CALL core_os_info_set(char* strOSName, char* strOSArc
  * Returns:
  * 	boolean value for success or not.
  */
-WISECORE_API bool WISECORE_CALL core_platform_info_set(char* strBIOSVersion, char* strPlatformName, char* strProcessorName);
+WISECORE_API bool core_platform_info_set(char* strBIOSVersion, char* strPlatformName, char* strProcessorName);
 
 /* 
  * Function: core_local_ip_set
@@ -136,7 +134,7 @@ WISECORE_API bool WISECORE_CALL core_platform_info_set(char* strBIOSVersion, cha
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_local_ip_set(char* strLocalIP);
+WISECORE_API bool core_local_ip_set(char* strLocalIP);
 
 /* 
  * Function: core_account_bind
@@ -150,7 +148,7 @@ WISECORE_API bool WISECORE_CALL core_local_ip_set(char* strLocalIP);
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_account_bind(char* strLoginID, char* strLoginPW);
+WISECORE_API bool core_account_bind(char* strLoginID, char* strLoginPW);
 
 /* 
  * Function: core_connection_callback_set
@@ -167,7 +165,7 @@ WISECORE_API bool WISECORE_CALL core_account_bind(char* strLoginID, char* strLog
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_connection_callback_set(CORE_CONNECTED_CALLBACK on_connect, CORE_LOSTCONNECTED_CALLBACK on_lostconnect, CORE_DISCONNECT_CALLBACK on_disconnect, CORE_MESSAGE_RECV_CALLBACK on_msg_recv);
+WISECORE_API bool core_connection_callback_set(CORE_CONNECTED_CALLBACK on_connect, CORE_LOSTCONNECTED_CALLBACK on_lostconnect, CORE_DISCONNECT_CALLBACK on_disconnect, CORE_MESSAGE_RECV_CALLBACK on_msg_recv);
 
 /* 
  * Function: core_action_callback_set
@@ -181,7 +179,7 @@ WISECORE_API bool WISECORE_CALL core_connection_callback_set(CORE_CONNECTED_CALL
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_action_callback_set(CORE_RENAME_CALLBACK on_rename, CORE_UPDATE_CALLBACK on_update);
+WISECORE_API bool core_action_callback_set(CORE_RENAME_CALLBACK on_rename, CORE_UPDATE_CALLBACK on_update);
 
 /*
  * Function: core_action_response
@@ -197,7 +195,7 @@ WISECORE_API bool WISECORE_CALL core_action_callback_set(CORE_RENAME_CALLBACK on
  * Returns:
  *  boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_action_response(const int cmdid, const char * sessoinid, bool success, const char* devid);
+WISECORE_API bool core_action_response(const int cmdid, const char * sessoinid, bool success, const char* devid);
 
 /* 
  * Function: core_server_reconnect_callback_set
@@ -210,7 +208,7 @@ WISECORE_API bool WISECORE_CALL core_action_response(const int cmdid, const char
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_server_reconnect_callback_set(CORE_SERVER_RECONNECT_CALLBACK on_server_reconnect);
+WISECORE_API bool core_server_reconnect_callback_set(CORE_SERVER_RECONNECT_CALLBACK on_server_reconnect);
 
 /*
  * Function: core_iot_callback_set
@@ -225,7 +223,7 @@ WISECORE_API bool WISECORE_CALL core_server_reconnect_callback_set(CORE_SERVER_R
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_iot_callback_set(CORE_GET_CAPABILITY_CALLBACK on_get_capability, CORE_START_REPORT_CALLBACK on_start_report, CORE_STOP_REPORT_CALLBACK on_stop_report);
+WISECORE_API bool core_iot_callback_set(CORE_GET_CAPABILITY_CALLBACK on_get_capability, CORE_START_REPORT_CALLBACK on_start_report, CORE_STOP_REPORT_CALLBACK on_stop_report);
 
 /*
  * Function: core_time_tick_callback_set
@@ -238,7 +236,7 @@ WISECORE_API bool WISECORE_CALL core_iot_callback_set(CORE_GET_CAPABILITY_CALLBA
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_time_tick_callback_set(CORE_GET_TIME_TICK_CALLBACK get_time_tick);
+WISECORE_API bool core_time_tick_callback_set(CORE_GET_TIME_TICK_CALLBACK get_time_tick);
 
 /* 
  * Function: core_heartbeat_callback_set
@@ -252,7 +250,7 @@ WISECORE_API bool WISECORE_CALL core_time_tick_callback_set(CORE_GET_TIME_TICK_C
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_heartbeat_callback_set(CORE_QUERY_HEARTBEATRATE_CALLBACK on_query_heartbeatrate, CORE_UPDATE_HEARTBEATRATE_CALLBACK on_update_heartbeatrate);
+WISECORE_API bool core_heartbeat_callback_set(CORE_QUERY_HEARTBEATRATE_CALLBACK on_query_heartbeatrate, CORE_UPDATE_HEARTBEATRATE_CALLBACK on_update_heartbeatrate);
 
 /*
  * Function: core_heartbeatratequery_response
@@ -267,7 +265,7 @@ WISECORE_API bool WISECORE_CALL core_heartbeat_callback_set(CORE_QUERY_HEARTBEAT
  * Returns:
  *  boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_heartbeatratequery_response(const int heartbeatrate, const char * sessoinid, const char* devid);
+WISECORE_API bool core_heartbeatratequery_response(const int heartbeatrate, const char * sessoinid, const char* devid);
 
 /*
  * Function: lite_tls_set
@@ -305,7 +303,7 @@ WISECORE_API bool WISECORE_CALL core_heartbeatratequery_response(const int heart
  * 	boolean value for success or not.	
  *
  */
-WISECORE_API bool WISECORE_CALL core_tls_set(const char *cafile, const char *capath, const char *certfile, const char *keyfile, const char *password);
+WISECORE_API bool core_tls_set(const char *cafile, const char *capath, const char *certfile, const char *keyfile, const char *password);
 
 /*
  * Function: core_tls_psk_set
@@ -327,7 +325,7 @@ WISECORE_API bool WISECORE_CALL core_tls_set(const char *cafile, const char *cap
  * 	boolean value for success or not.	
  *
  */
-WISECORE_API bool WISECORE_CALL core_tls_psk_set(const char *psk, const char *identity, const char *ciphers);
+WISECORE_API bool core_tls_psk_set(const char *psk, const char *identity, const char *ciphers);
 
 /* 
  * Function: core_connect
@@ -343,7 +341,7 @@ WISECORE_API bool WISECORE_CALL core_tls_psk_set(const char *psk, const char *id
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_connect(char* strServerIP, int iServerPort, char* strConnID, char* strConnPW);
+WISECORE_API bool core_connect(char* strServerIP, int iServerPort, char* strConnID, char* strConnPW);
 
 /* 
  * Function: core_disconnect
@@ -356,7 +354,7 @@ WISECORE_API bool WISECORE_CALL core_connect(char* strServerIP, int iServerPort,
  * Returns:
  * 	None
  */
-WISECORE_API void WISECORE_CALL core_disconnect(bool bForce);
+WISECORE_API void core_disconnect(bool bForce);
 
 /* 
  * Function: core_device_register
@@ -369,7 +367,7 @@ WISECORE_API void WISECORE_CALL core_disconnect(bool bForce);
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_device_register();
+WISECORE_API bool core_device_register();
 
 /* 
  * Function: core_platform_register
@@ -382,7 +380,7 @@ WISECORE_API bool WISECORE_CALL core_device_register();
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_platform_register();
+WISECORE_API bool core_platform_register();
 
 /* 
  * Function: core_heartbeat_send
@@ -395,7 +393,7 @@ WISECORE_API bool WISECORE_CALL core_platform_register();
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_heartbeat_send();
+WISECORE_API bool core_heartbeat_send();
 
 /* 
  * Function: core_publish
@@ -412,7 +410,7 @@ WISECORE_API bool WISECORE_CALL core_heartbeat_send();
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_publish(char const * topic, void * pkt, long pktlength, int retain, int qos);
+WISECORE_API bool core_publish(char const * topic, void * pkt, long pktlength, int retain, int qos);
 
 /* 
  * Function: core_subscribe
@@ -426,7 +424,7 @@ WISECORE_API bool WISECORE_CALL core_publish(char const * topic, void * pkt, lon
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_subscribe(char const * topic, int qos);
+WISECORE_API bool core_subscribe(char const * topic, int qos);
 
 /* 
  * Function: core_unsubscribe
@@ -439,7 +437,7 @@ WISECORE_API bool WISECORE_CALL core_subscribe(char const * topic, int qos);
  * Returns:
  * 	boolean value for success or not.	
  */
-WISECORE_API bool WISECORE_CALL core_unsubscribe(char const * topic);
+WISECORE_API bool core_unsubscribe(char const * topic);
 
 /*
  * Function: core_address_get
@@ -452,7 +450,7 @@ WISECORE_API bool WISECORE_CALL core_unsubscribe(char const * topic);
  * Returns:
  *	true or false.
  */
-WISECORE_API bool WISECORE_CALL core_address_get(char *address);
+WISECORE_API bool core_address_get(char *address);
 
 /* 
  * Function: core_error_string_get
@@ -465,7 +463,7 @@ WISECORE_API bool WISECORE_CALL core_address_get(char *address);
  * Returns:
  *	A constant string describing the error.
  */
-WISECORE_API const char* WISECORE_CALL core_error_string_get();
+WISECORE_API const char* core_error_string_get();
 
 #ifdef __cplusplus
 }

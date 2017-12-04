@@ -8,9 +8,7 @@
 #ifndef WISEUTILITY_H_
 #define WISEUTILITY_H_
 #include <stdio.h>
-#include <unistd.h>
 
-#define NULL_STRING(x) (x == NULL ? "":x)
 #define wiseprint printf
 #define usecSleep usleep
 

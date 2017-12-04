@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="WiseSnail" Database="">
   <Project Name="AdvJSON" Path="AdvJSON.project" Active="No"/>
-  <Project Name="AdvLog" Path="AdvLog.project" Active="Yes"/>
+  <Project Name="AdvLog" Path="AdvLog.project" Active="No"/>
   <Project Name="WiseCore" Path="WiseCore.project" Active="No"/>
-  <Project Name="WiseSnail" Path="WiseSnail.project" Active="No"/>
-  <Project Name="WiseCarrier" Path="WiseCarrier.project" Active="No"/>
+  <Project Name="WiseSnail" Path="WiseSnail.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Environment/>
@@ -13,7 +12,6 @@
       <Project Name="WiseCore" ConfigName="Debug"/>
       <Project Name="WiseCore" ConfigName="Debug"/>
       <Project Name="WiseSnail" ConfigName="Debug"/>
-      <Project Name="WiseCarrier" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release" Selected="yes">
       <Environment/>
@@ -22,7 +20,6 @@
       <Project Name="WiseCore" ConfigName="Debug"/>
       <Project Name="WiseCore" ConfigName="Debug"/>
       <Project Name="WiseSnail" ConfigName="Debug"/>
-      <Project Name="WiseCarrier" ConfigName="Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

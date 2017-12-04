@@ -7,7 +7,6 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
-#include "base64.h"
 #include "wiseconfig.h"
 #include "wisememory.h"
 #include "wiseutility.h"
@@ -19,13 +18,6 @@
 
 
 
-
-static const char *SERVICE_INFOSPEC_SENDATA_V_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"v\":%d,\"min\":%d,\"max\":%d,\"asm\":\"%s\",\"type\":\"d\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
-static const char *SERVICE_INFOSPEC_SENDATA_FV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"v\":%f,\"min\":%f,\"max\":%f,\"asm\":\"%s\",\"type\":\"d\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
-static const char *SERVICE_INFOSPEC_SENDATA_SV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"sv\":\"%s\",\"min\":%d,\"max\":%d,\"asm\":\"%s\",\"type\":\"s\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
-static const char *SERVICE_INFOSPEC_SENDATA_BV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"bv\":%s,\"min\":false,\"max\":true,\"asm\":\"%s\",\"type\":\"b\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
-static const char *SERVICE_INFOSPEC_SENDATA_CV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"sv\":\"%s\",\"min\":%d,\"max\":%d,\"asm\":\"%s\",\"type\":\"s\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\",\"format\":\"%s\"}";
-
 ///cagent/admin/00170d00006063c2/agentactionreq
 static const char *SEN_GET_RESPONSE = "{\"susiCommData\":{\"commCmd\":%d,\"handlerName\":\"%s\",\"sessionID\":\"%s\",\"sensorInfoList\":{\"e\":[%s]}}}";
 //@@@ commandId[n], handlerName[s], sessionId[s], senData[ss]
@@ -33,7 +25,6 @@ static const char *SEN_GET_RESPONSE = "{\"susiCommData\":{\"commCmd\":%d,\"handl
 static const char *SEN_GET_DATA_V_JSON = "{\"n\":\"%s%s\",\"v\":%d,\"StatusCode\":%d}";
 static const char *SEN_GET_DATA_FV_JSON = "{\"n\":\"%s%s\",\"v\":%f,\"StatusCode\":%d}";
 static const char *SEN_GET_DATA_SV_JSON = "{\"n\":\"%s%s\",\"sv\":\"%s\",\"StatusCode\":%d}";
-static const char *SEN_GET_DATA_CV_JSON = "{\"n\":\"%s%s\",\"sv\":\"%s\",\"format\":\"%s\",\"StatusCode\":%d}";
 static const char *SEN_GET_DATA_BV_JSON = "{\"n\":\"%s%s\",\"bv\":%s,\"StatusCode\":%d}";
 
 ///cagent/admin/00170d00006063c2/agentactionreq
@@ -81,13 +72,7 @@ void SetHeartBeatRate(WiseAgentData *data) {
 typedef struct wiseagent_cmddata {
     union {
         double value;
-#ifdef __MCU__
         char string[AGENT_CMD_LEN];
-#else
-        char *string;
-        WiseSnail_RAW raw;
-#endif
-        
     };
 } WiseAgent_CmdData;
 
@@ -127,25 +112,20 @@ typedef struct wiseagent_device {
 WiseAgent_DEVICE gDevices[MAX_DEVICES];
 static int gDeviceCount = 0;
 
-int DefaultStringGet(WiseSnail_Data *data) {
-   strcpy(data->string, data->info->string);
-}
-
-
 WiseAgentInfoSpec gInterfaceItem[] = {
-    { WISE_STRING, 	"/Info/SenHubList", .getValue = DefaultStringGet},
-    { WISE_STRING, 	"/Info/Neighbor", .getValue = DefaultStringGet},
-    { WISE_STRING, 	"/Info/Name", .getValue = DefaultStringGet},
+    { WISE_STRING, 	"/Info/SenHubList"},
+    { WISE_STRING, 	"/Info/Neighbor"},
+    { WISE_STRING, 	"/Info/Name"},
     { WISE_VALUE, 	"/Info/Health", .value = 100},
-	{ WISE_STRING, 	"/Info/sw", .string = "1.2.1.12", .getValue = DefaultStringGet},
+	{ WISE_STRING, 	"/Info/sw", .string = "1.2.1.12"},
     { WISE_BOOL, 	"/Info/reset", .value = 0}
 };
 
 WiseAgentInfoSpec gSensorDefaultItem[] = {
-    { WISE_STRING, "/Info/Name", .string = "OnBoard", .getValue = DefaultStringGet},
-    { WISE_STRING, "/Info/sw", .string = INFO_SW, .getValue = DefaultStringGet},
-    { WISE_STRING, "/Net/sw", .string = NET_SW, .getValue = DefaultStringGet},
-	{ WISE_STRING, "/Net/Neighbor", .string = "", .getValue = DefaultStringGet},
+    { WISE_STRING, "/Info/Name", .string = "OnBoard"},
+    { WISE_STRING, "/Info/sw", .string = INFO_SW},
+    { WISE_STRING, "/Net/sw", .string = NET_SW},
+	{ WISE_STRING, "/Net/Neighbor", .string = ""},
     { WISE_VALUE, "/Net/Health", .value = 100},
 };
 
@@ -173,7 +153,6 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
     char *topic = (char *)WiseMem_Alloc(128);
 	char *message = (char *)WiseMem_Alloc(8192);
     char *jsonvalue = (char *)WiseMem_Alloc(1024);
-    char formatBuffer[1024];
     char *pos = jsonvalue;
 	
 	if(deviceId == -1) {
@@ -186,8 +165,6 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
 		sprintf(topic, WA_PUB_ACTION_TOPIC, gGwId);
 	} else if(strlen(handler) == 6 && strncmp(handler,"SenHub",6) == 0) {
 		sprintf(topic, WA_PUB_ACTION_TOPIC, mac);
-    } else if(strlen(handler) == 7 && strncmp(handler,"Service",7) == 0) {
-		sprintf(topic, WA_PUB_ACTION_TOPIC, gGwId);
 	} else if(strncmp("0007",mac,4) == 0) {
 		sprintf(topic, WA_PUB_ACTION_TOPIC, gGwId);
 	} else {
@@ -217,21 +194,9 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
 							break;
 						case WISE_STRING:
 							pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, cmddata->string, statusCode);
-                            #ifndef __MCU__
-                                free(cmddata->string);
-                            #endif
 							break;
 						case WISE_BOOL:
 							pos += sprintf(pos, SEN_GET_DATA_BV_JSON, *name == '/' ? "" : "/SenData/", name, cmddata->value > 0 ? "true" : "false", statusCode);
-							break;
-                        case WISE_CUSTOMIZE:
-                            switch(item->format) {
-                                case WISE_BASE64:
-                                default:
-                                    base64_encode_padding(formatBuffer, cmddata->raw.data, cmddata->raw.len);
-                                    pos += sprintf(pos, SEN_GET_DATA_CV_JSON, *name == '/' ? "" : "/SenData/", name, formatBuffer, "base64", statusCode);
-                                break;
-                            }
 							break;
 						/*default:
 							wiseprint("Datatype error!!\n");
@@ -246,57 +211,17 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
                     } else {
                         switch(item->type) {
 							case WISE_VALUE:
-                                if(strlen(handler) == 7 && strncmp(handler,"Service",7) == 0) {
-                                    pos += sprintf(pos, SEN_GET_DATA_V_JSON, *name == '/' ? "" : "/SenData/", cmddata->value, 200);
-                                } else {
-                                    pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, "Success", 200);
-                                }
-								break;
                             case WISE_FLOAT:
-                                if(strlen(handler) == 7 && strncmp(handler,"Service",7) == 0) {
-                                    pos += sprintf(pos, SEN_GET_DATA_FV_JSON, *name == '/' ? "" : "/SenData/", cmddata->value, 200);
-                                } else {
-                                    pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, "Success", 200);
-                                }
-								break;
 							case WISE_BOOL:
-                                if(strlen(handler) == 7 && strncmp(handler,"Service",7) == 0) {
-                                    pos += sprintf(pos, SEN_GET_DATA_BV_JSON, *name == '/' ? "" : "/SenData/", cmddata->value, 200);
-                                } else {
-                                    pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, "Success", 200);
-                                }
+								pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, "Success", 200);
 								break;
 							case WISE_STRING:
-                                if(strlen(handler) == 7 && strncmp(handler,"Service",7) == 0) {
-                                    pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, cmddata->string, 200);
-                                } else {
-                                    pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, "Success", 200);
-                                }
-								#ifndef __MCU__
-                                    free(cmddata->string);
-                                #endif
-								break;
-                            case WISE_CUSTOMIZE:
-                                if(strlen(handler) == 7 && strncmp(handler,"Service",7) == 0) {
-                                    switch(item->format) {
-                                        default:
-                                        case WISE_BASE64:
-                                            base64_encode_padding(formatBuffer, cmddata->raw.data, cmddata->raw.len);
-                                            pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, formatBuffer, "base64", 200);
-                                        break;
-                                    }
-                                    #ifndef __MCU__
-                                        free(cmddata->raw.data);
-                                    #endif
-                                } else {
-                                    pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, "Success", 200);
-                                }
+								pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, "Success", 200);
 								break;
 							/*default:
 								wiseprint("Datatype error!!\n");
 								infiniteloop();*/
 						}
-                        
                     }
                 } break;
             }
@@ -306,9 +231,6 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
             } else {
 				switch(statusCode) {
 					default:
-                    case 202:
-						pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, "Accepted", statusCode);
-						break;
 					case 404:
 						pos += sprintf(pos, SEN_GET_DATA_SV_JSON, *name == '/' ? "" : "/SenData/", name, "Not Found", statusCode);
 						break;
@@ -325,7 +247,7 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
             break;
             case 526:
                 sprintf(message,SEN_SET_RESPONSE, cmdId, handler, sessionId, jsonvalue);
-                response = message;
+				response = message;
             break;
 			case 2052:
 				if(deviceId == 0) {
@@ -345,7 +267,7 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
     //WiseMQTT_WriteOnce(topic, message);
 	
 	if(response != NULL) {
-		core_publish(topic, response, strlen(response), 0, 0);
+		core_publish(topic, response, strlen(response)+1, 0, 0);
 	}
     
     WiseMem_Release();
@@ -377,32 +299,8 @@ int WiseAccess_AssignCmd(int cmdId, int deviceId, int itemId, int statusCode, ch
 		return 1;
 	} else return 0;
 }
-
 static void CmdNotFound(int cmdId, int statusCode, char *handleName, char *target, char *sessionId) {
 	WiseAccess_AssignCmd(-1, -1, -1, statusCode, handleName, target, sessionId, NULL, NULL);
-}
-
-static void Accepted(int cmdId, char *handleName, char *target, char *sessionId) {
-	WiseAccess_AssignCmd(-1, -1, -1, 202, handleName, target, sessionId, NULL, NULL);
-}
-
-float boolTrans(char *string, int len) {
-	int i = 0;
-	for(i = 0 ; i < len; i++) {
-		if(string[i] == 't') {
-			if(strncmp(&string[i],"true",4) == 0) {
-				return (float)1.0;
-			}
-		}
-
-		if(string[i] == 'f') {
-			if(strncmp(&string[i],"false",5) == 0) {
-				return (float)0.0;
-			}
-		}
-	}
-
-	return (float)atoi(string);
 }
 
 
@@ -412,12 +310,10 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 	char clientId[64] = {0};
 	static char buffer[128] = {0};
 	static char value[1024] = {0};
-    static char temp[1024] = {0};
     int cmdId;
     char *start;
-	char *target = NULL;
+	char *target;
     char *end;
-    char *formatTag = NULL;
     int len;
     int search;
     WiseAgent_CMD *cmd;
@@ -575,39 +471,16 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 			//wiseprint("@@@@@@@@@@@@@@\033[36mbuffer = [%s]\033[0m\r\n", buffer);
 
 			//wiseprint("@@@@@@@@@@@@@@\033[36msessionId = [%s]\033[0m\r\n", sessionId);
-		} else if(strlen(handlerName) == 7 && strncmp(handlerName,"Service",7) == 0) {
-			start = strchr(payload,'/')+1;
-			start = strchr(start,'/')+1;
-			end = strchr(start,'/');
-			len = (long)(end-start);
-
-			strncpy(clientId,start,len);
-			clientId[len] = 0;
-			start += len;
-			printf("clientId = %s\n", clientId);
-			d = WiseAccess_FindDevice(clientId);
-			printf("d = %d\n", d);
-			if(d < 0) return;
-			items = gDevices[d].items;
-			itemCount = &gDevices[d].itemCount;
-			printf("itemCount = %p\n", itemCount);
-			end = strstr(start,"\"}");
-			len = (long)(end-start);
-			strncpy(buffer,start,len);
-			buffer[len] = 0;
-			target = buffer;
-            
-            printf("target = %s\n", target);
-			
 		}
 		
 		if(d < 0) return;
 		
 		//find value
 		for(search = 0 ; search < *itemCount ; search++) {
-			item = items[search]; 
-			if(strncmp(target, item->name, strlen(item->name)) == 0) {
+			item = items[search];
+			if(strcmp(target, item->name) == 0) {
 				//if(WiseAccess_AssignCmd(cmdId, search, 200, item->name, sessionId, NULL)) {
+
 				if((gCmdHead+1)%MAX_CMDS != gCmdTail) {
 					/*cmd = &gCmds[gCmdHead];
 					cmd->cmdId = cmdId;
@@ -615,13 +488,14 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 					strcpy(cmd->name,item->name);
 					cmd->statusCode = 200;
 					strcpy(cmd->sessionId, sessionId);*/
+					
 					if(cmdId == 525) {
 						//value set in
 						WiseAgentData data;
 						data.clientId = gDevices[d].cliendId;
 						data.type = item->type;
 						data.name = item->name;
-						data.info = item;
+						
 						
 						start = strstr(payload,"v\":");
 						switch(*(start-1)) {
@@ -631,9 +505,9 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 								len = (long)(end-start);
 								memcpy(value, start, (long)(end-start));
 								value[len] = 0;
+								//item->value = atof(value);
 								cmddata.value = atof(value);
 								data.value = cmddata.value;
-								item->value = cmddata.value;
 								break;
 							case 's':
 								start += 4;
@@ -643,53 +517,10 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 									if(*(end-1) != '\\') break;
 								} while(1);
 								len = (long)(end-start);
-								formatTag = strstr(end , "format");
-                                if(formatTag == 0 || strstr(end, "}") <= formatTag) {
-                                    memcpy(value, start, len);
-                                    value[len] = 0;
-                                    
-                                    printf("value = %s\n", value);
-                                    #ifdef __MCU__
-                                        strcpy(cmddata.string, value);
-                                    #else
-                                        cmddata.string = strdup(value);
-                                    #endif
-                                    
-                                    printf("cmddata.string = %s\n", cmddata.string);
-                                    data.string = cmddata.string;
-                                    data.type = WISE_STRING;
-                                    
-                                } else {
-                                    formatTag += 9;
-                                    do {
-                                        end = strstr(formatTag,"\"");
-                                        if(*(end-1) != '\\') break;
-                                    } while(1);
-                                    
-                                    memcpy(temp, formatTag, (long)(end-formatTag));
-                                    if(strncmp(temp, "base64" , strlen("base64")) == 0) {
-                                    
-                                        memcpy(temp, start, len);
-                                        temp[len] = 0;
-                                        printf("temp = %s\n", temp);
-                                        
-                                        len = base64_decode_padding(value, temp);
-                                        #ifdef __MCU__
-                                            memcpy(cmddata.raw.data, value, len);
-                                        #else
-                                            cmddata.raw.data = malloc(len);
-                                            memcpy(cmddata.raw.data, value, len);
-                                        #endif
-                                        cmddata.raw.len = len;
-                                        
-                                        printf("cmddata.raw.data = %s, len = %d\n", cmddata.raw.data, len);
-                                        data.raw = &cmddata.raw;
-                                    } else {
-                                        CmdNotFound(cmdId, 0, handlerName, NULL, sessionId);
-                                        return;
-                                    }
-                                }
-								
+								memcpy(value, start, len);
+								value[len] = 0;
+								strcpy(cmddata.string, value);
+								data.string = cmddata.string;
 								break;
 							case 'b':
 								start += 3;
@@ -697,9 +528,9 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 								len = (long)(end-start);
 								memcpy(value, start, len);
 								value[len] = 0;
-								cmddata.value = boolTrans(value,strlen(value));
+								//item->value = (float)atoi(value);
+								cmddata.value = (float)atoi(value);
 								data.value = cmddata.value;
-								item->value = cmddata.value;
 								break;
 							default:
 								break;
@@ -707,19 +538,14 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 						
 						if(item->setValue != NULL) {
 							data.info = item;
-                            //Accepted(cmdId, handlerName, target, sessionId);
 							item->setValue(&data);
-                            
 						}
 					} else if(cmdId == 523) {
-                        printf("<%s,%d>\n",__FILE__,__LINE__);
 						if(item->getValue != NULL) {
 							WiseAgentData data;
-                            printf("<%s,%d>\n",__FILE__,__LINE__);
 							data.clientId = gDevices[d].cliendId;
 							data.type = item->type;
 							data.name = item->name;
-                            data.info = item;
 							switch(item->type) {
 								case WISE_VALUE:
                                 case WISE_FLOAT:
@@ -728,23 +554,11 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 									cmddata.value = data.value;
 									break;
 								case WISE_STRING:
-                                    #ifndef __MCU__
-                                        cmddata.string = (char *)malloc(AGENT_CMD_LEN);
-                                    #endif
 									data.string = cmddata.string;
 									item->getValue(&data);
-                                    break;
-                                case WISE_CUSTOMIZE:
-                                    printf("<%s,%d>\n",__FILE__,__LINE__);
-                                    printf("<%s,%d>\n",__FILE__,__LINE__);
-									data.raw = &cmddata.raw;
-                                    printf("<%s,%d>\n",__FILE__,__LINE__);
-									item->getValue(&data);
-                                    printf("<%s,%d>\n",__FILE__,__LINE__);
 									break;
 							}
 						} else {
-                            printf("<%s,%d>\n",__FILE__,__LINE__);
 							switch(item->type) {
 								case WISE_VALUE:
                                 case WISE_FLOAT:
@@ -752,10 +566,8 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 									cmddata.value = item->value;
 									break;
 								case WISE_STRING:
-                                case WISE_CUSTOMIZE:
-                                    printf("<%s,%d>\n",__FILE__,__LINE__);
-									CmdNotFound(cmdId, 0, handlerName, NULL, sessionId);
-									return;
+									strcpy(cmddata.string, item->string);
+									break;
 							}
 						}
 					}
@@ -799,43 +611,24 @@ void WiseAccess_Init(char *default_gwName, char *gwMac) {
 
 static char gIf_Name[32];
 static char gIf_SenHublist[2048];
-void WiseAccess_InterfaceInit(char *deviceMac, char *name, int defaultItems) {
+void WiseAccess_InterfaceInit(char *deviceMac, char *name) {
 	int d = WiseAccess_CreateDevice(deviceMac);
 	if(d != 0) return;
-    int defaultCount = 0;
 	if(gDevices[d].itemCount == 0) {
-        if(defaultCount >= defaultItems) return;
 		/*char *pos = gIf_SenHublist;
 		pos += sprintf(pos,"%s",deviceMac);
 		*(pos+2) = 0;*/
 		gInterfaceItem[0].string = gIf_SenHublist;
 		WiseAccess_AddItem(deviceMac, "/Info/SenHubList", &gInterfaceItem[0]);
-        defaultCount++;
-        if(defaultCount >= defaultItems) return;
-        
 		gInterfaceItem[1].string = gIf_SenHublist;
 		WiseAccess_AddItem(deviceMac, "/Info/Neighbor", &gInterfaceItem[1]);
-        defaultCount++;
-        if(defaultCount >= defaultItems) return;
-        
-        
 		strncpy(gIf_Name, name, sizeof(gIf_Name));
 		gInterfaceItem[2].string = gIf_Name;
 		WiseAccess_AddItem(deviceMac, "/Info/Name", &gInterfaceItem[2]);
-        defaultCount++;
-        if(defaultCount >= defaultItems) return;
 		
 		WiseAccess_AddItem(deviceMac, "/Info/Health", &gInterfaceItem[3]);
-        defaultCount++;
-        if(defaultCount >= defaultItems) return;
-        
 		WiseAccess_AddItem(deviceMac, "/Info/sw", &gInterfaceItem[4]);
-        defaultCount++;
-        if(defaultCount >= defaultItems) return;
-        
 		WiseAccess_AddItem(deviceMac, "/Info/reset", &gInterfaceItem[5]);
-        defaultCount++;
-        if(defaultCount >= defaultItems) return;
 	}
 }
 
@@ -955,13 +748,6 @@ void WiseAccess_AccessVariable(char *deviceId, int set, char *name, WiseAgentDat
 						data->string = item->string;
                     }
                     break;
-                case WISE_CUSTOMIZE:
-                    if(set == 1) {
-						item->raw = data->raw;
-                    } else {
-						data->raw = item->raw;
-                    }
-                    break;
                 /*default:
                     wiseprint("Datatype error!!\n");
                     infiniteloop();*/
@@ -1027,75 +813,7 @@ void WiseAccess_GenerateTokenCapability(char *deviceId, char *token, char *buffe
     WiseAgentInfoSpec *item;
 	char *pos = buffer;
 	int count = 0;
-    char *nameTag = NULL;
-    char *access = "rw";
-    char formatBuffer[1024];
-    
-    for(search = 0 ; search < itemCount ; search++) {
-        item = items[search];
-		if(item->name[0] == '/') {
-			if(strncmp(item->name+1, token, strlen(token)) == 0) {
-				if(count != 0) pos += sprintf(pos, ",");
-                
-                nameTag = item->name+strlen(token) + 2;
-                
-                if(item->setValue == NULL) {
-                    access = "r";
-                } else {
-                    access = "rw";
-                    if(item->type == WISE_STRING) {
-                        if(item->getValue == NULL) {
-                            access = "r";
-                        }
-                    }
-                }
-                
-                switch(item->type) {
-                    case WISE_VALUE:
-                        pos += sprintf(pos, SERVICE_INFOSPEC_SENDATA_V_JSON, nameTag, NULL_STRING(item->unit), (int)item->value, (int)item->min, (int)item->max, access, NULL_STRING(item->resourcetype));
-                        break;
-                    case WISE_FLOAT:
-                        pos += sprintf(pos, SERVICE_INFOSPEC_SENDATA_FV_JSON, nameTag, NULL_STRING(item->unit), item->value, item->min, item->max, access, NULL_STRING(item->resourcetype));
-                        break;
-                    case WISE_BOOL:
-                        pos += sprintf(pos, SERVICE_INFOSPEC_SENDATA_BV_JSON, nameTag, NULL_STRING(item->unit), item->value > 0 ? "true" : "false", access, NULL_STRING(item->resourcetype));
-                        break;
-                    case WISE_STRING:
-                        pos += sprintf(pos, SERVICE_INFOSPEC_SENDATA_SV_JSON, nameTag, NULL_STRING(item->unit), item->string, (int)item->min, (int)item->max, access, NULL_STRING(item->resourcetype));
-                        break;
-                    case WISE_CUSTOMIZE:
-                        switch(item->format) {
-                            default:
-                            case WISE_BASE64:
-                                base64_encode_padding(formatBuffer, item->raw->data, item->raw->len);
-                                pos += sprintf(pos, SERVICE_INFOSPEC_SENDATA_CV_JSON, nameTag, NULL_STRING(item->unit), formatBuffer, (int)item->min, (int)item->max, access, NULL_STRING(item->resourcetype), "base64");
-                            break;
-                        }
-                        break;
-                    default:
-                        wiseprint("Infospec datatype error!!\n");
-                        infiniteloop();
-                        break;
-                }
-				count++;
-			}
-		}
-    }
-}
 
-void WiseAccess_GenerateTokenDataInfo(char *deviceId, char *token, char *buffer, int buflen) {
-	if(strlen(token) == 0) return;
-	int d = WiseAccess_FindDevice(deviceId);
-	if(d < 0) return;
-	WiseAgentInfoSpec **items = gDevices[d].items;
-	int itemCount = gDevices[d].itemCount;
-	int search;
-    WiseAgentInfoSpec *item;
-    buffer[0] = 0;
-	char *pos = buffer;
-	int count = 0;
-    char formatBuffer[1024];
-    
     for(search = 0 ; search < itemCount ; search++) {
         item = items[search];
 		if(item->name[0] == '/') {
@@ -1113,21 +831,60 @@ void WiseAccess_GenerateTokenDataInfo(char *deviceId, char *token, char *buffer,
 						pos += sprintf(pos, ",\"bv\":%s", item->value > 0 ? "true" : "false");
 						break;
 					case WISE_STRING:
-                        pos += sprintf(pos, ",\"sv\":\"%s\"", item->string);
-                        break;
-                    case WISE_CUSTOMIZE:
-                        switch(item->format) {
-                            default:
-                            case WISE_BASE64:
-                                base64_encode_padding(formatBuffer, item->raw->data, item->raw->len);
-                                pos += sprintf(pos, ",\"sv\":\"%s\",\"format\":\"base64\"", formatBuffer);
-                            break;
-                        }
+						pos += sprintf(pos, ",\"sv\":\"%s\"", item->string);
 						break;
 					/*default:
 						wiseprint("Datatype error!!\n");
 						infiniteloop();*/
 				}
+				
+				if(item->setValue == NULL) {
+					pos += sprintf(pos, ",\"asm\":\"r\"");
+				} else {
+					pos += sprintf(pos, ",\"asm\":\"rw\"");
+				}
+				pos += sprintf(pos, "}");
+				count++;
+			}
+		}
+    }
+}
+
+void WiseAccess_GenerateTokenDataInfo(char *deviceId, char *token, char *buffer, int buflen) {
+	if(strlen(token) == 0) return;
+	int d = WiseAccess_FindDevice(deviceId);
+	if(d < 0) return;
+	WiseAgentInfoSpec **items = gDevices[d].items;
+	int itemCount = gDevices[d].itemCount;
+	int search;
+    WiseAgentInfoSpec *item;
+	char *pos = buffer;
+	int count = 0;
+
+    for(search = 0 ; search < itemCount ; search++) {
+        item = items[search];
+		if(item->name[0] == '/') {
+			if(strncmp(item->name+1, token, strlen(token)) == 0) {
+				if(count != 0) pos += sprintf(pos, ",");
+				pos += sprintf(pos, "{\"n\":\"%s\"", item->name+strlen(token) + 2);
+				switch(item->type) {
+					case WISE_VALUE:
+						pos += sprintf(pos, ",\"v\":%d", (int)item->value);
+						break;
+                    case WISE_FLOAT:
+						pos += sprintf(pos, ",\"v\":%f", item->value);
+						break;
+					case WISE_BOOL:
+						pos += sprintf(pos, ",\"bv\":%s", item->value > 0 ? "true" : "false");
+						break;
+					case WISE_STRING:
+						pos += sprintf(pos, ",\"sv\":\"%s\"", item->string);
+						break;
+					/*default:
+						wiseprint("Datatype error!!\n");
+						infiniteloop();*/
+				}
+				
 				/*if(item->setValue == NULL) {
 					pos += sprintf(pos, ",\"asm\":\"r\"");
 				} else {

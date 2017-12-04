@@ -8,7 +8,7 @@
 
 ADVPLAT_EXPORT long ADVPLAT_CALL semget(key_t key, int nsems, int semflg) {
 
-	//HANDLE hSemObject;
+	HANDLE hSemObject;
 #ifdef UNICODE
 	WCHAR wsz[64];
 	swprintf(wsz, 64, L"%X", key);

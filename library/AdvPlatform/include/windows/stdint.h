@@ -5,22 +5,17 @@
 /* Abstract     :  					*/
 /* Reference    : None														*/
 /****************************************************************************/
-#ifndef __export_h__
-#define __export_h__
+#ifndef __stdint_h__
+#define __stdint_h__
 
-#if defined(WIN32)
-	#pragma once
-	#ifdef ADVPLAT_EXPORTS
-		#define ADVPLAT_CALL __stdcall
-		#define ADVPLAT_EXPORT __declspec(dllexport)
-	#else
-		#define ADVPLAT_CALL __stdcall
-		#define ADVPLAT_EXPORT
-	#endif
-#else
-	#define ADVPLAT_CALL
-	#define ADVPLAT_EXPORT
-#endif
+typedef unsigned char           uint8_t;
+typedef unsigned short int      uint16_t;
+typedef unsigned int            uint32_t;
+typedef unsigned long long int  uint64_t;
 
+typedef char           int8_t;
+typedef short int      int16_t;
+typedef int            int32_t;
+typedef long long int  int64_t;
 
-#endif //__export_h__
+#endif //__stdint_h__
