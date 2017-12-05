@@ -20,7 +20,8 @@
 /*===============================================================*/
 
 #define INTERFACE "Ethernet"
-#define VERSOIN SNAIL_FACTORY_VERSION
+//#define VERSOIN SNAIL_FACTORY_VERSION
+#define VERSOIN "3.1.23"
 
 //[WillMessage]
 ///cagent/admin/000000049F0130E0/willmessage
@@ -60,10 +61,14 @@ static const char *SEN_CONNECT_JSON = "{\"susiCommData\":{\"devID\":\"%s\",\"hos
 static const char *SEN_DISCONNECT_JSON = "{\"susiCommData\":{\"devID\":\"%s\",\"hostname\":\"%s\",\"sn\":\"%s\",\"mac\":\"%s\",\"version\":\""VERSOIN"\",\"type\":\"SenHub\",\"product\":\"\",\"manufacture\":\"\",\"status\":\"0\",\"commCmd\":1,\"requestID\":30002,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ sMac[s], hostname[s]{Agriculture}, sMac[s], sMac[s], sMac[s], timestamp[d]
 
+//[Sensor OSInfo]
+///cagent/admin/00170d00006063c2/agentactionreq
+static const char *SEN_OSINFO_JSON = "{\"susiCommData\":{\"osInfo\":{\"cagentVersion\":\""VERSOIN"\",\"cagentType\":\"SenHub\",\"osVersion\":\"\",\"biosVersion\":\"\",\"platformName\":\"\",\"processorName\":\"\",\"osArch\":\"x86\",\"totalPhysMemKB\":1026060,\"macs\":\"\",\"IP\":\"\"},\"commCmd\":116,\"requestID\":109,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
+
 
 //[Sensor INFOSPEC]
 ///cagent/admin/00170d00006063c2/agentactionreq
-static const char *SEN_INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"SenHub\":{\"SenData\":{\"e\":[%s],\"bn\":\"SenData\"},\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"Net\":{\"e\":[%s],\"bn\":\"Net\"},\"Action\":{\"e\":[%s],\"bn\":\"Action\"},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
+static const char *SEN_INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"SenHub\":{\"SenData\":{\"e\":[%s],\"bn\":\"SenData\"},\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"Net\":{\"e\":[%s],\"bn\":\"Net\"},\"Action\":{\"e\":[%s],\"bn\":\"Action\"},\"opTS\":{\"$date\":%d},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ hostname[s]{Agriculture}, senData[ss], Health[d], Topology[sl], sMac[s], timestamp[d]
 
 static const char *SEN_INFOSPEC_SENDATA_V_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"v\":%d,\"min\":%d,\"max\":%d,\"asm\":\"%s\",\"type\":\"d\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
@@ -84,7 +89,7 @@ static const char *SEN_INFOSPEC_SENDATA_BV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"
 
 //[Sensor DEVICEINFO]
 ///cagent/admin/00170d00006063c2/deviceinfo
-static const char *SEN_DEVINFO_JSON = "{\"susiCommData\":{\"data\":{\"SenHub\":{\"SenData\":{\"e\":[%s],\"bn\":\"SenData\"},\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"Net\":{\"e\":[%s],\"bn\":\"Net\"},\"Action\":{\"e\":[%s],\"bn\":\"Action\"},\"ver\":1}},\"commCmd\":2055,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
+static const char *SEN_DEVINFO_JSON = "{\"susiCommData\":{\"data\":{\"SenHub\":{\"SenData\":{\"e\":[%s],\"bn\":\"SenData\"},\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"Net\":{\"e\":[%s],\"bn\":\"Net\"},\"Action\":{\"e\":[%s],\"bn\":\"Action\"},\"opTS\":{\"$date\":%d},\"ver\":1}},\"commCmd\":2055,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ senData[ss], Health[d], Topology[sl], sMac[s], timestamp[d]
 
 static const char *SEN_DEVINFO_SENDATA_V_JSON = "{\"n\":\"%s\",\"v\":%d}";
@@ -415,6 +420,17 @@ int WiseAgent_PublishSensorConnectMessage(char *deviceId) {
     WiseMem_Release();
 }
 
+int WiseAgent_PublishSensorOSInfoMessage(char *deviceId) {
+    char *topic = (char *)WiseMem_Alloc(128);
+    char *message = (char *)WiseMem_Alloc(8192);
+
+    sprintf(topic, WA_PUB_ACTION_TOPIC, deviceId);
+
+    sprintf(message,SEN_OSINFO_JSON, deviceId, timestamp++);
+    core_publish(topic, message, strlen(message), 0, 0);
+    WiseMem_Release();
+}
+
 int WiseAgent_PublishSensorDisconnectMessage(char *deviceId) {
     char *topic = (char *)WiseMem_Alloc(128);
     char *message = (char *)WiseMem_Alloc(8192);
@@ -482,6 +498,7 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
     WiseAccess_ConnectionStatus(deviceId, 1);
 
 	WiseAgent_PublishSensorConnectMessage(deviceId);
+//        WiseAgent_PublishSensorOSInfoMessage(deviceId);
 
     topic = (char *)WiseMem_Alloc(128);
     message = (char *)WiseMem_Alloc(8192);
@@ -556,7 +573,7 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
 	wiseprint("infoString:\033[33m\"%s\"\033[0m\r\n", infoString);
 	wiseprint("netString:\033[33m\"%s\"\033[0m\r\n", netString);
 	wiseprint("actionString:\033[33m\"%s\"\033[0m\r\n", actionString);
-	sprintf(message,SEN_INFOSPEC_JSON, senhublist, infoString, netString, actionString, deviceId, timestamp++);
+	sprintf(message,SEN_INFOSPEC_JSON, senhublist, infoString, netString, actionString, timestamp++, deviceId, timestamp);
 	wiseprint("message:\033[33m\"%s\"\033[0m\r\n", message);
 	core_publish(topic, message, strlen(message), 0, 0);
 	WiseAccess_SetInfoSpec(deviceId, message, strlen(message)+1);
@@ -603,6 +620,7 @@ void WiseAgent_SenHubReConnected(char *deviceMac) {
 	WiseAgent_PublishInterfaceDeviceInfoMessage(gatewayId);
     
     WiseAgent_PublishSensorConnectMessage(deviceId);
+//    WiseAgent_PublishSensorOSInfoMessage(deviceId);
 }
 
 
@@ -685,9 +703,9 @@ void WiseAgent_Write(char *deviceMac, WiseAgentData* data, int count) {
 		WiseAccess_GenerateTokenDataInfo(deviceId, "Info", infoString, WiseMem_Size(infoString));
 		WiseAccess_GenerateTokenDataInfo(deviceId, "Net", netString, WiseMem_Size(netString));
 		WiseAccess_GenerateTokenDataInfo(deviceId, "Action", actionString, WiseMem_Size(actionString));
-		sprintf(message,SEN_DEVINFO_JSON, senhublist, infoString, netString, actionString, deviceId, timestamp++);
+		sprintf(message,SEN_DEVINFO_JSON, senhublist, infoString, netString, actionString,  timestamp++, deviceId, timestamp);
 	} else {
-		sprintf(message,SEN_DEVINFO_JSON, senhublist, "", "", "", deviceId, timestamp++);
+		sprintf(message,SEN_DEVINFO_JSON, senhublist, "", "", "",  timestamp++, deviceId, timestamp);
 	}
 	wiseprint("message:\033[33m\"%s\"\033[0m\r\n", message);
 	core_publish(topic, message, strlen(message), 0, 0);
