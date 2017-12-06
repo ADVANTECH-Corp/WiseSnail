@@ -303,6 +303,25 @@ static void CmdNotFound(int cmdId, int statusCode, char *handleName, char *targe
 	WiseAccess_AssignCmd(-1, -1, -1, statusCode, handleName, target, sessionId, NULL, NULL);
 }
 
+float boolTrans(char *string, int len) 
+{
+	int i = 0;
+	for(i = 0 ; i < len; i++) {
+		if(string[i] == 't') {
+			if(strncmp(&string[i],"true",4) == 0) {
+				return (float)1.0;
+			}
+		}
+
+		if(string[i] == 'f') {
+			if(strncmp(&string[i],"false",5) == 0) {
+				return (float)0.0;
+			}
+		}
+	}
+
+	return (float)atoi(string);
+}
 
 void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 	char sessionId[64] = {0};
@@ -529,7 +548,8 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 								memcpy(value, start, len);
 								value[len] = 0;
 								//item->value = (float)atoi(value);
-								cmddata.value = (float)atoi(value);
+								//cmddata.value = (float)atoi(value);
+								cmddata.value = boolTrans(value,strlen(value));
 								data.value = cmddata.value;
 								break;
 							default:
