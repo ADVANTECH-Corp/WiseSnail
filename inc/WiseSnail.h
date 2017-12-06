@@ -82,11 +82,11 @@ WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Get(char *deviceMac, char *name, 
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_MainLoop(WiseSnail_SleepOneSecond sleepOneSec);
 WISESNAIL_EXPORT void WISESNAIL_CALL WiseSnail_Uninit();
 
-#define WiseSnail_Cmd_Handler WiseSnail_MainLoop
-#define WiseSnail_Open WiseSnail_Connect
-#define WiseSnail_Write WiseSnail_Update
-#define WiseSnail_Read WiseSnail_Get
-#define WiseSnail_Close WiseSnail_Uninit
+//#define WiseSnail_Cmd_Handler WiseSnail_MainLoop
+//#define WiseSnail_Open WiseSnail_Connect
+//#define WiseSnail_Write WiseSnail_Update
+//#define WiseSnail_Read WiseSnail_Get
+//#define WiseSnail_Close WiseSnail_Uninit
 
 #ifdef __cplusplus
 }
