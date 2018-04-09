@@ -36,23 +36,73 @@ WiseSnail_InfoSpec interface1[] = {
 		}
 };
 
+WiseSnail_Data data[] = {
+		{
+				WISE_VALUE,
+				"Temperature",
+				100
+		},
+		{
+				WISE_VALUE,
+				"Humidity",
+				55
+		},
+		{
+		        WISE_BOOL,
+                "GPIO1",
+                0
+        },
+		{
+                WISE_BOOL,
+                "GPIO2",
+                0
+		},
+		{
+				WISE_STRING,
+				"/Info/Name",
+				.string = "123456789012345678901234567890",
+		},
+		{
+				WISE_STRING,
+				"/Info/sw",
+				.string = "1.0.00",
+		},
+		{
+				WISE_STRING,
+				"/Net/sw",
+				.string = "1.0.00",
+		},
+		{
+				WISE_STRING,
+				"/Net/Neighbor",
+				.string = "",
+		},
+		{
+				WISE_VALUE,
+				"/Net/Health",
+				100,
+		}
+};
+
 char SHName[128] = "123";
-int SetSHName(WiseSnail_Data *data) {
-   printf("###############Set SenHub name %s\n",data->string);
-   strcpy(SHName, data->string);
+int SetSHName(WiseSnail_Data *mydata) {
+	printf("###############Set SenHub name %s\n",mydata->string);
+	strcpy(SHName, mydata->string);
 }
 
-int GetSHName(WiseSnail_Data *data) {
-   printf("###############Get SenHub name %s\n",data->string);
-   strcpy(data->string, SHName);
+int GetSHName(WiseSnail_Data *mydata) {
+	printf("###############Get SenHub name %s\n",mydata->string);
+	strcpy(mydata->string, SHName);
 }
 
-int SetGPIO_1(WiseSnail_Data *data) {
-   printf("\n###############Set GPIO1 to %d\n\n", (int)data->value);
+int SetGPIO_1(WiseSnail_Data *mydata) {
+	printf("\n###############Set GPIO1 to %d\n\n", (int)mydata->value);
+	data[2].value = (mydata->value != 0) ? 1 : 0;
 }
 
-int GetGPIO_1(WiseSnail_Data *data) {
-   printf("\n###############Get %d from GPIO1\n\n", (int)data->value);
+int GetGPIO_1(WiseSnail_Data *mydata) {
+	mydata->value = data[2].value;
+	printf("\n###############Get %d from GPIO1\n\n", (int)mydata->value);
 }
 
 WiseSnail_InfoSpec infospec1[] = {
@@ -158,54 +208,6 @@ WiseSnail_InfoSpec infospec2[] = {
 		}
 };
 
-
-WiseSnail_Data data[] = {
-		{
-				WISE_VALUE,
-				"Temperature",
-				100
-		},
-		{
-				WISE_VALUE,
-				"Humidity",
-				55
-		},
-		{
-		        WISE_BOOL,
-                "GPIO1",
-                0
-        },
-		{
-                WISE_BOOL,
-                "GPIO2",
-                0
-		},
-		{
-				WISE_STRING,
-				"/Info/Name",
-				.string = "123456789012345678901234567890",
-		},
-		{
-				WISE_STRING,
-				"/Info/sw",
-				.string = "1.0.00",
-		},
-		{
-				WISE_STRING,
-				"/Net/sw",
-				.string = "1.0.00",
-		},
-		{
-				WISE_STRING,
-				"/Net/Neighbor",
-				.string = "",
-		},
-		{
-				WISE_VALUE,
-				"/Net/Health",
-				100,
-		}
-};
 
 void GetSystemMac(unsigned char *mac, int len) {
 	int fd;

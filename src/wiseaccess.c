@@ -129,6 +129,44 @@ WiseAgentInfoSpec gSensorDefaultItem[] = {
     { WISE_VALUE, "/Net/Health", .value = 100},
 };
 
+void dump_gDevices (void)
+{
+	int i = 0 , d = 0;
+	for (d = 0 ; d < gDeviceCount ; d++)
+	{
+		fprintf (stderr, "gDevices [%d] connection=%d\n", d, gDevices[d].connection);
+		fprintf (stderr, "gDevices [%d] cliendId=%s\n",   d, gDevices[d].cliendId);
+		fprintf (stderr, "gDevices [%d] infospec=%s\n",   d, gDevices[d].infospec);
+		fprintf (stderr, "gDevices [%d] itemCount=%d\n",  d, gDevices[d].itemCount);
+		WiseAgentInfoSpec **items = gDevices[d].items;
+		for (i=0;i<gDevices[d].itemCount;i++)
+		{
+			WiseAgentInfoSpec *item;
+			item = items[i];
+			fprintf (stderr, "gDevices [%d] item[%02d] name=%s\n",  d, i, item->name);
+			switch(item->type)
+			{
+				case WISE_VALUE:
+					fprintf (stderr, "gDevices [%d] item[%02d] type=%d ,  WISE_VALUE\n",  d, i, item->type);
+					fprintf (stderr, "gDevices [%d] item[%02d] value=%f\n",     		  d, i, item->value);
+					break;
+				case WISE_FLOAT:
+					fprintf (stderr, "gDevices [%d] item[%02d] type=%d , WISE_FLOAT\n",   d, i, item->type);
+					fprintf (stderr, "gDevices [%d] item[%02d] value=%f\n",     		  d, i, item->value);
+					break;
+				case WISE_STRING:
+					fprintf (stderr, "gDevices [%d] item[%02d] type=%d , WISE_STRING\n",  d, i, item->type);
+					fprintf (stderr, "gDevices [%d] item[%02d] string=%s\n",     		  d, i, item->string);
+					break;
+				case WISE_BOOL:
+					fprintf (stderr, "gDevices [%d] item[%02d] type=%d , WISE_BOOL\n",    d, i, item->type);
+					fprintf (stderr, "gDevices [%d] item[%02d] value=%f\n",     		  d, i, item->value);
+					break;
+			}
+		}
+	}
+}
+
 /*void SetSHName(WiseAgentData *data) {
 	int d = WiseAccess_FindDevice(data->clientId);
 	if(d >= 0) {
@@ -303,6 +341,25 @@ static void CmdNotFound(int cmdId, int statusCode, char *handleName, char *targe
 	WiseAccess_AssignCmd(-1, -1, -1, statusCode, handleName, target, sessionId, NULL, NULL);
 }
 
+float boolTrans(char *string, int len) 
+{
+	int i = 0;
+	for(i = 0 ; i < len; i++) {
+		if(string[i] == 't') {
+			if(strncmp(&string[i],"true",4) == 0) {
+				return (float)1.0;
+			}
+		}
+
+		if(string[i] == 'f') {
+			if(strncmp(&string[i],"false",5) == 0) {
+				return (float)0.0;
+			}
+		}
+	}
+
+	return (float)atoi(string);
+}
 
 void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 	char sessionId[64] = {0};
@@ -529,7 +586,8 @@ void CmdReceive(const char *topic, const void *payload, const long pktlength) {
 								memcpy(value, start, len);
 								value[len] = 0;
 								//item->value = (float)atoi(value);
-								cmddata.value = (float)atoi(value);
+								//cmddata.value = (float)atoi(value);
+								cmddata.value = boolTrans(value,strlen(value));
 								data.value = cmddata.value;
 								break;
 							default:
