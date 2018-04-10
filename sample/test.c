@@ -38,22 +38,22 @@ WiseSnail_InfoSpec interface1[] = {
 };
 
 char SHName[128] = "123";
-int SetSHName(WiseSnail_Data *data) {
-   printf("###############Set SenHub name %s\n",data->string);
+int SetSHName(WiseSnail_Data *mydata) {
+   printf("###############Set SenHub name %s\n",mydata->string);
    strcpy(SHName, data->string);
 }
 
-int GetSHName(WiseSnail_Data *data) {
-   printf("###############Get SenHub name %s\n",data->string);
-   strcpy(data->string, SHName);
+int GetSHName(WiseSnail_Data *mydata) {
+   printf("###############Get SenHub name %s\n",mydata->string);
+   strcpy(mydata->string, SHName);
 }
 
-int SetGPIO_1(WiseSnail_Data *data) {
-   printf("\n###############Set GPIO1 to %d\n\n", (int)data->value);
+int SetGPIO_1(WiseSnail_Data *mydata) {
+   printf("\n###############Set GPIO1 to %d\n\n", (int)mydata->value);
 }
 
-int GetGPIO_1(WiseSnail_Data *data) {
-   printf("\n###############Get %d from GPIO1\n\n", (int)data->value);
+int GetGPIO_1(WiseSnail_Data *mydata) {
+   printf("\n###############Get %d from GPIO1\n\n", (int)mydata->value);
 }
 
 char rawData[128] = "ABCDE";

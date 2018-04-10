@@ -149,6 +149,44 @@ WiseAgentInfoSpec gSensorDefaultItem[] = {
     { WISE_VALUE, "/Net/Health", .value = 100},
 };
 
+void dump_gDevices (void)
+{
+	int i = 0 , d = 0;
+	for (d = 0 ; d < gDeviceCount ; d++)
+	{
+		fprintf (stderr, "gDevices [%d] connection=%d\n", d, gDevices[d].connection);
+		fprintf (stderr, "gDevices [%d] cliendId=%s\n",   d, gDevices[d].cliendId);
+		fprintf (stderr, "gDevices [%d] infospec=%s\n",   d, gDevices[d].infospec);
+		fprintf (stderr, "gDevices [%d] itemCount=%d\n",  d, gDevices[d].itemCount);
+		WiseAgentInfoSpec **items = gDevices[d].items;
+		for (i=0;i<gDevices[d].itemCount;i++)
+		{
+			WiseAgentInfoSpec *item;
+			item = items[i];
+			fprintf (stderr, "gDevices [%d] item[%02d] name=%s\n",  d, i, item->name);
+			switch(item->type)
+			{
+				case WISE_VALUE:
+					fprintf (stderr, "gDevices [%d] item[%02d] type=%d ,  WISE_VALUE\n",  d, i, item->type);
+					fprintf (stderr, "gDevices [%d] item[%02d] value=%f\n",     		  d, i, item->value);
+					break;
+				case WISE_FLOAT:
+					fprintf (stderr, "gDevices [%d] item[%02d] type=%d , WISE_FLOAT\n",   d, i, item->type);
+					fprintf (stderr, "gDevices [%d] item[%02d] value=%f\n",     		  d, i, item->value);
+					break;
+				case WISE_STRING:
+					fprintf (stderr, "gDevices [%d] item[%02d] type=%d , WISE_STRING\n",  d, i, item->type);
+					fprintf (stderr, "gDevices [%d] item[%02d] string=%s\n",     		  d, i, item->string);
+					break;
+				case WISE_BOOL:
+					fprintf (stderr, "gDevices [%d] item[%02d] type=%d , WISE_BOOL\n",    d, i, item->type);
+					fprintf (stderr, "gDevices [%d] item[%02d] value=%f\n",     		  d, i, item->value);
+					break;
+			}
+		}
+	}
+}
+
 /*void SetSHName(WiseAgentData *data) {
 	int d = WiseAccess_FindDevice(data->clientId);
 	if(d >= 0) {
@@ -345,7 +383,7 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
     //WiseMQTT_WriteOnce(topic, message);
 	
 	if(response != NULL) {
-		core_publish(topic, response, strlen(response), 0, 0);
+		core_publish(topic, response, strlen(response)+1, 0, 0);
 	}
     
     WiseMem_Release();
