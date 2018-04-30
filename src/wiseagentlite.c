@@ -47,13 +47,13 @@ static const char *ACTION_JSON = "\"Action\":{\"e\":[%s],\"bn\":\"Action\"}";
 
 //[INFOSPEC]
 ///cagent/admin/000000049F0130E0/agentactionreq
-static const char *INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"%s\":{\"%s\":{\"%s\":{\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"bn\":\"%s\",\"ver\":1},\"bn\":\"%s\",\"ver\":1},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
+static const char *INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"%s\":{\"%s\":{\"%s\":{\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"bn\":\"%s\",\"ver\":1},\"bn\":\"%s\",\"ver\":1},\"opTS\":{\"$date\":12345},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ Interface[s], Interface[s], InterfaceNumber[d], SenHubList[sl], Topology[sl], Interface[s], InterfaceNumber[d], Health[d], wsnMac[s], Interface[s], gwMac[s], timestamp[d]
 
 
 //[DEVICEINFO]
 ///cagent/admin/000000049F0130E0/deviceinfo
-static const char *DEVICEINFO_JSON = "{\"susiCommData\":{\"data\":{\"%s\":{\"%s\":{\"%s\":{%s,\"bn\":\"%s\",\"ver\":1},\"bn\":\"%s\"},\"ver\":1}},\"commCmd\":2055,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
+static const char *DEVICEINFO_JSON = "{\"susiCommData\":{\"data\":{\"%s\":{\"%s\":{\"%s\":{%s,\"bn\":\"%s\",\"ver\":1},\"bn\":\"%s\"},\"opTS\":{\"$date\":12345},\"ver\":1}},\"commCmd\":2055,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ Interface[s], Interface[s], InterfaceNumber[d], SenHubList[sl], Topology[sl], Interface[s], InterfaceNumber[d], Health[d], wsnMac[s], Interface[s], gwMac[s], timestamp[d]
 
 
@@ -70,7 +70,7 @@ static const char *SEN_DISCONNECT_JSON = "{\"susiCommData\":{\"devID\":\"%s\",\"
 
 //[Sensor INFOSPEC]
 ///cagent/admin/00170d00006063c2/agentactionreq
-static const char *SEN_INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"SenHub\":{\"SenData\":{\"e\":[%s],\"bn\":\"SenData\"},\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"Net\":{\"e\":[%s],\"bn\":\"Net\"},\"Action\":{\"e\":[%s],\"bn\":\"Action\"},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
+static const char *SEN_INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"SenHub\":{\"SenData\":{\"e\":[%s],\"bn\":\"SenData\"},\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"Net\":{\"e\":[%s],\"bn\":\"Net\"},\"Action\":{\"e\":[%s],\"bn\":\"Action\"},\"opTS\":{\"$date\":%d},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ hostname[s]{Agriculture}, senData[ss], Health[d], Topology[sl], sMac[s], timestamp[d]
 
 static const char *SEN_INFOSPEC_SENDATA_V_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"v\":%d,\"min\":%d,\"max\":%d,\"asm\":\"%s\",\"type\":\"d\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
@@ -91,7 +91,7 @@ static const char *SEN_INFOSPEC_SENDATA_CV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"
 
 //[Sensor DEVICEINFO]
 ///cagent/admin/00170d00006063c2/deviceinfo
-static const char *SEN_DEVINFO_JSON = "{\"susiCommData\":{\"data\":{\"SenHub\":{%s,\"ver\":1}},\"commCmd\":2055,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
+static const char *SEN_DEVINFO_JSON = "{\"susiCommData\":{\"data\":{\"SenHub\":{%s,\"opTS\":{\"$date\":%d},\"ver\":1}},\"commCmd\":2055,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%d}}";
 //@@@ senData[ss], Health[d], Topology[sl], sMac[s], timestamp[d]
 
 static const char *SEN_DEVINFO_SENDATA_V_JSON = "{\"n\":\"%s\",\"v\":%d}";
@@ -589,7 +589,7 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
 	wiseprint("infoString:\033[33m\"%s\"\033[0m\r\n", infoString);
 	wiseprint("netString:\033[33m\"%s\"\033[0m\r\n", netString);
 	wiseprint("actionString:\033[33m\"%s\"\033[0m\r\n", actionString);
-	sprintf(message,SEN_INFOSPEC_JSON, senhublist, infoString, netString, actionString, deviceId, timestamp++);
+	sprintf(message,SEN_INFOSPEC_JSON, senhublist, infoString, netString, actionString, timestamp++, deviceId, timestamp);
 	wiseprint("message:\033[33m\"%s\"\033[0m\r\n", message);
 	core_publish(topic, message, strlen(message), 0, 0);
 	WiseAccess_SetInfoSpec(deviceId, message, strlen(message)+1);
@@ -782,12 +782,12 @@ void WiseAgent_Write(char *deviceMac, WiseAgentData* data, int count) {
                 pos += sprintf(pos, "%s", actionString);
             }
             
-            sprintf(message,SEN_DEVINFO_JSON, senhublist, deviceId, timestamp++);
+            sprintf(message,SEN_DEVINFO_JSON, senhublist, timestamp++, deviceId, timestamp);
         } else {
             pos = senhublist;
             if(strlen(message) != 0) pos += sprintf(pos, SENDATA_JSON, message);
             
-            sprintf(message,SEN_DEVINFO_JSON, senhublist, deviceId, timestamp++);
+            sprintf(message,SEN_DEVINFO_JSON, senhublist, timestamp++, deviceId, timestamp);
         }
     }
     sprintf(topic, WA_PUB_DEVINFO_TOPIC, deviceId);
