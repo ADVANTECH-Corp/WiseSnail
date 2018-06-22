@@ -383,6 +383,8 @@ void WiseAgent_Response(int cmdId, char *handler, int deviceId, int itemId, char
     //WiseMQTT_WriteOnce(topic, message);
 	
 	if(response != NULL) {
+		wiseprint("topic[%d]:\033[33m\"%s\"\033[0m\r\n", strlen(topic), topic);
+		wiseprint("message:\033[33m\"%s\"\033[0m\r\n", response);
 		core_publish(topic, response, strlen(response)+1, 0, 0);
 	}
     

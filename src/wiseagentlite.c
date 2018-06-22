@@ -47,13 +47,13 @@ static const char *ACTION_JSON = "\"Action\":{\"e\":[%s],\"bn\":\"Action\"}";
 
 //[INFOSPEC]
 ///cagent/admin/000000049F0130E0/agentactionreq
-static const char *INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"%s\":{\"%s\":{\"%s\":{\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"bn\":\"%s\",\"ver\":1},\"bn\":\"%s\",\"ver\":1},\"opTS\":{\"$date\":12345},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%lld}}";
+static const char *INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"%s\":{\"%s\":{\"%s\":{\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"bn\":\"%s\",\"ver\":1},\"bn\":\"%s\",\"ver\":1},\"opTS\":{\"$date\":%lld},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%lld}}";
 //@@@ Interface[s], Interface[s], InterfaceNumber[d], SenHubList[sl], Topology[sl], Interface[s], InterfaceNumber[d], Health[d], wsnMac[s], Interface[s], gwMac[s], timestamp[d]
 
 
 //[DEVICEINFO]
 ///cagent/admin/000000049F0130E0/deviceinfo
-static const char *DEVICEINFO_JSON = "{\"susiCommData\":{\"data\":{\"%s\":{\"%s\":{\"%s\":{%s,\"bn\":\"%s\",\"ver\":1},\"bn\":\"%s\"},\"opTS\":{\"$date\":12345},\"ver\":1}},\"commCmd\":2055,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%lld}}";
+static const char *DEVICEINFO_JSON = "{\"susiCommData\":{\"data\":{\"%s\":{\"%s\":{\"%s\":{%s,\"bn\":\"%s\",\"ver\":1},\"bn\":\"%s\"},\"opTS\":{\"$date\":%lld},\"ver\":1}},\"commCmd\":2055,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%lld}}";
 //@@@ Interface[s], Interface[s], InterfaceNumber[d], SenHubList[sl], Topology[sl], Interface[s], InterfaceNumber[d], Health[d], wsnMac[s], Interface[s], gwMac[s], timestamp[d]
 
 
@@ -70,7 +70,7 @@ static const char *SEN_DISCONNECT_JSON = "{\"susiCommData\":{\"devID\":\"%s\",\"
 
 //[Sensor INFOSPEC]
 ///cagent/admin/00170d00006063c2/agentactionreq
-static const char *SEN_INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"SenHub\":{\"SenData\":{\"e\":[%s],\"bn\":\"SenData\"},\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"Net\":{\"e\":[%s],\"bn\":\"Net\"},\"Action\":{\"e\":[%s],\"bn\":\"Action\"},\"opTS\":{\"$date\":%d},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%lld}}";
+static const char *SEN_INFOSPEC_JSON = "{\"susiCommData\":{\"infoSpec\":{\"SenHub\":{\"SenData\":{\"e\":[%s],\"bn\":\"SenData\"},\"Info\":{\"e\":[%s],\"bn\":\"Info\"},\"Net\":{\"e\":[%s],\"bn\":\"Net\"},\"Action\":{\"e\":[%s],\"bn\":\"Action\"},\"opTS\":{\"$date\":%lld},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%lld}}";
 //@@@ hostname[s]{Agriculture}, senData[ss], Health[d], Topology[sl], sMac[s], timestamp[d]
 
 static const char *SEN_INFOSPEC_SENDATA_V_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"v\":%d,\"min\":%d,\"max\":%d,\"asm\":\"%s\",\"type\":\"d\",\"rt\":\"%s\",\"st\":\"ipso\",\"exten\":\"\"}";
@@ -91,7 +91,7 @@ static const char *SEN_INFOSPEC_SENDATA_CV_JSON = "{\"n\":\"%s\",\"u\":\"%s\",\"
 
 //[Sensor DEVICEINFO]
 ///cagent/admin/00170d00006063c2/deviceinfo
-static const char *SEN_DEVINFO_JSON = "{\"susiCommData\":{\"data\":{\"SenHub\":{%s,\"opTS\":{\"$date\":%d},\"ver\":1}},\"commCmd\":2055,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%lld}}";
+static const char *SEN_DEVINFO_JSON = "{\"susiCommData\":{\"data\":{\"SenHub\":{%s,\"opTS\":{\"$date\":%lld},\"ver\":1}},\"commCmd\":2055,\"requestID\":2001,\"agentID\":\"%s\",\"handlerName\":\"general\",\"sendTS\":%lld}}";
 //@@@ senData[ss], Health[d], Topology[sl], sMac[s], timestamp[d]
 
 static const char *SEN_DEVINFO_SENDATA_V_JSON = "{\"n\":\"%s\",\"v\":%d}";
@@ -314,7 +314,8 @@ static int WiseAgent_ConnectBySSL(char *server_url, int port, char *username, ch
 	char *message = NULL;
     char *senhublist = NULL;
     char *infoString = NULL;
-	
+	long long ts = 0;
+
     iRet = core_initialize(gatewayId, (char *)GetGWName(), interfaceMac);
     if(!iRet)
 	{
@@ -403,13 +404,19 @@ static int WiseAgent_ConnectBySSL(char *server_url, int port, char *username, ch
     printf("<%s,%d>gatewayId = %s\n", __FILE__,__LINE__,gatewayId);
 	sprintf(senhublist, "%s", interfaceId);
 	WiseAccess_GenerateTokenCapability(interfaceId, "Info", infoString, WiseMem_Size(infoString));
-	sprintf(message,INFOSPEC_JSON, groupName ,interfaceName, interfaceId/*interfaceTag*/, infoString, interfaceId, interfaceName, gatewayId, my_get_timetick(NULL));
+	ts = my_get_timetick(NULL);
+	sprintf(message,INFOSPEC_JSON, groupName ,interfaceName, interfaceId/*interfaceTag*/, infoString, interfaceId, interfaceName, ts, gatewayId, ts);
+	wiseprint("topic[%d]:\033[33m\"%s\"\033[0m\r\n", strlen(topic), topic);
+	wiseprint("message:\033[33m\"%s\"\033[0m\r\n", message);
 	core_publish(topic, message, strlen(message), 0, 0);
 	
 	sprintf(topic, WA_PUB_DEVINFO_TOPIC, gatewayId);
 	WiseAccess_GenerateTokenDataInfo(interfaceId, "Info", senhublist, WiseMem_Size(senhublist));
     sprintf(infoString, INFO_JSON, senhublist);
-	sprintf(message,DEVICEINFO_JSON, groupName, interfaceName, interfaceId/*interfaceTag*/, infoString, interfaceId, interfaceName, gatewayId, my_get_timetick(NULL));
+	ts = my_get_timetick(NULL);
+	sprintf(message,DEVICEINFO_JSON, groupName, interfaceName, interfaceId/*interfaceTag*/, infoString, interfaceId, interfaceName, ts, gatewayId, ts);
+	wiseprint("topic[%d]:\033[33m\"%s\"\033[0m\r\n", strlen(topic), topic);
+	wiseprint("message:\033[33m\"%s\"\033[0m\r\n", message);
 	core_publish(topic, message, strlen(message), 0, 0);
 
     WiseMem_Release();
@@ -425,10 +432,15 @@ int WiseAgent_PublishInterfaceInfoSpecMessage(char *gatewayId) {
     char *message = (char *)WiseMem_Alloc(8192);
     char *senhublist = (char *)WiseMem_Alloc(4096);
     char *infoString = (char *)WiseMem_Alloc(1024);
+	long long ts = 0;
+
 	sprintf(topic, WA_PUB_ACTION_TOPIC, gatewayId);
 	sprintf(senhublist, "%s", interfaceId);
 	WiseAccess_GenerateTokenCapability(interfaceId, "Info", infoString, WiseMem_Size(infoString));
-	sprintf(message,INFOSPEC_JSON, groupName, interfaceName, interfaceId/*interfaceTag*/, infoString, interfaceId, interfaceName, gatewayId, my_get_timetick(NULL));
+	ts = my_get_timetick(NULL);
+	sprintf(message,INFOSPEC_JSON, groupName, interfaceName, interfaceId/*interfaceTag*/, infoString, interfaceId, interfaceName, ts, gatewayId, ts);
+	wiseprint("topic[%d]:\033[33m\"%s\"\033[0m\r\n", strlen(topic), topic);
+	wiseprint("message:\033[33m\"%s\"\033[0m\r\n", message);
 	core_publish(topic, message, strlen(message), 0, 0);
     WiseMem_Release();
 }
@@ -440,11 +452,15 @@ int WiseAgent_PublishInterfaceDeviceInfoMessage(char *gatewayId) {
     char *message = (char *)WiseMem_Alloc(8192);
     char *senhublist = (char *)WiseMem_Alloc(4096);
     char *infoString = (char *)WiseMem_Alloc(1024);
+	long long ts = 0;
     
 	sprintf(topic, WA_PUB_DEVINFO_TOPIC, gatewayId);
 	WiseAccess_GenerateTokenDataInfo(interfaceId, "Info", senhublist, WiseMem_Size(infoString));
     sprintf(infoString, INFO_JSON, senhublist);
-	sprintf(message,DEVICEINFO_JSON, groupName, interfaceName, interfaceId/*interfaceTag*/, infoString, interfaceId, interfaceName, gatewayId, my_get_timetick(NULL));
+	ts = my_get_timetick(NULL);
+	sprintf(message,DEVICEINFO_JSON, groupName, interfaceName, interfaceId/*interfaceTag*/, infoString, interfaceId, interfaceName, ts, gatewayId, ts);
+	wiseprint("topic[%d]:\033[33m\"%s\"\033[0m\r\n", strlen(topic), topic);
+	wiseprint("message:\033[33m\"%s\"\033[0m\r\n", message);
 	core_publish(topic, message, strlen(message), 0, 0);
     WiseMem_Release();
 }
@@ -456,6 +472,8 @@ int WiseAgent_PublishSensorConnectMessage(char *deviceId) {
 	WiseAgentData shname;
 	WiseAccess_Get(deviceId, "/Info/Name", &shname);
 	sprintf(message,SEN_CONNECT_JSON, deviceId, shname.string, deviceId, deviceId, deviceId, my_get_timetick(NULL));
+	wiseprint("topic[%d]:\033[33m\"%s\"\033[0m\r\n", strlen(topic), topic);
+	wiseprint("message:\033[33m\"%s\"\033[0m\r\n", message);
 	core_publish(topic, message, strlen(message), 0, 0);
     
     sprintf(topic,WA_SUB_CBK_TOPIC, deviceId);
@@ -471,6 +489,8 @@ int WiseAgent_PublishSensorDisconnectMessage(char *deviceId) {
 	WiseAgentData shname;
 	WiseAccess_Get(deviceId, "/Info/Name", &shname);
 	sprintf(message,SEN_DISCONNECT_JSON, deviceId, shname.string, deviceId, deviceId, deviceId, my_get_timetick(NULL));
+	wiseprint("topic[%d]:\033[33m\"%s\"\033[0m\r\n", strlen(topic), topic);
+	wiseprint("message:\033[33m\"%s\"\033[0m\r\n", message);
 	core_publish(topic, message, strlen(message), 0, 0);
     
     sprintf(topic,WA_SUB_CBK_TOPIC, deviceId);
@@ -604,6 +624,7 @@ void WiseAgent_RegisterSensor(char *deviceMac, char *defaultName, WiseAgentInfoS
 	wiseprint("actionString:\033[33m\"%s\"\033[0m\r\n", actionString);
 	ts = my_get_timetick(NULL);
 	sprintf(message,SEN_INFOSPEC_JSON, senhublist, infoString, netString, actionString, ts, deviceId, ts);
+	wiseprint("topic[%d]:\033[33m\"%s\"\033[0m\r\n", strlen(topic), topic);
 	wiseprint("message:\033[33m\"%s\"\033[0m\r\n", message);
 	core_publish(topic, message, strlen(message), 0, 0);
 	WiseAccess_SetInfoSpec(deviceId, message, strlen(message)+1);
@@ -765,12 +786,13 @@ void WiseAgent_Write(char *deviceMac, WiseAgentData* data, int count) {
                 if(pos != senhublist) pos += sprintf(pos, ",");
                 pos += sprintf(pos, "%s", actionString);
             }
-			sprintf(message,DEVICEINFO_JSON, groupName, interfaceName, interfaceId/*interfaceTag*/, senhublist, interfaceId, interfaceName, gatewayId, my_get_timetick(NULL));
+			ts = my_get_timetick(NULL);
+			sprintf(message,DEVICEINFO_JSON, groupName, interfaceName, interfaceId/*interfaceTag*/, senhublist, interfaceId, interfaceName, ts, gatewayId, ts);
         } else {
             pos = senhublist;
             if(strlen(message) != 0) pos += sprintf(pos, SENDATA_JSON, message);
-
-			sprintf(message,DEVICEINFO_JSON, groupName, interfaceName, interfaceId/*interfaceTag*/, senhublist, interfaceId, interfaceName, gatewayId, my_get_timetick(NULL));
+			ts = my_get_timetick(NULL);
+			sprintf(message,DEVICEINFO_JSON, groupName, interfaceName, interfaceId/*interfaceTag*/, senhublist, interfaceId, interfaceName, ts, gatewayId, ts);
         }
     } else {
         if(otherInfo) {
