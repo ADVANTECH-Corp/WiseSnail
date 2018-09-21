@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <sys/time.h>
 
 #include "snail_version.h"
 #include "wisememory.h"
