@@ -20,14 +20,17 @@ typedef void (*WICAR_LOSTCONNECT_CB)(void *userdata);
 typedef void (*WICAR_MESSAGE_CB)(const char* topic, const void* payload, const int payloadlen, void *userdata);
 
 
-#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+
+#if defined(WIN32)
 #pragma once
 #include <windows.h>
-#ifndef WISE_CARRIER_API
-	#define WISE_CARRIER_API __declspec(dllexport)
-#endif
+#include "AdvPlatform.h"
+#pragma comment(lib, "AdvPlatform.lib")
+#define WISE_CARRIER_CALL __stdcall
+#define WISE_CARRIER_API __declspec(dllexport)
 #else
-	#define WISE_CARRIER_API
+#define WISE_CARRIER_CALL
+#define WISE_CARRIER_API
 #endif
 
 #ifdef __cplusplus
@@ -46,7 +49,7 @@ extern "C" {
  * Returns:
  *	none
  */
-WISE_CARRIER_API const char* WiCar_MQTT_LibraryTag();
+WISE_CARRIER_API const char* WISE_CARRIER_CALL WiCar_MQTT_LibraryTag();
 
 /*
  * Function: WiCar_MQTT_Init
@@ -61,7 +64,7 @@ WISE_CARRIER_API const char* WiCar_MQTT_LibraryTag();
  * 	boolean value for success or not.
  *
  */
-WISE_CARRIER_API bool WiCar_MQTT_Init(WICAR_CONNECT_CB on_connect, WICAR_DISCONNECT_CB on_disconnect, void *userdata);
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_Init(WICAR_CONNECT_CB on_connect, WICAR_DISCONNECT_CB on_disconnect, void *userdata);
 
 /*
  * Function: WiCar_MQTT_Uninit
@@ -75,7 +78,7 @@ WISE_CARRIER_API bool WiCar_MQTT_Init(WICAR_CONNECT_CB on_connect, WICAR_DISCONN
  * 	boolean value for success or not.
  *
  */
-WISE_CARRIER_API void WiCar_MQTT_Uninit();
+WISE_CARRIER_API void WISE_CARRIER_CALL WiCar_MQTT_Uninit();
 
 //Parameter
 /*
@@ -92,7 +95,7 @@ WISE_CARRIER_API void WiCar_MQTT_Uninit();
  * 	boolean value for success or not.
  *
  */
-WISE_CARRIER_API bool WiCar_MQTT_SetWillMsg(const char* topic, const void *msg, int msglen);
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_SetWillMsg(const char* topic, const void *msg, int msglen);
 
 /*
  * Function: WiCar_MQTT_SetAuth
@@ -107,7 +110,7 @@ WISE_CARRIER_API bool WiCar_MQTT_SetWillMsg(const char* topic, const void *msg, 
  * 	boolean value for success or not.
  *
  */
-WISE_CARRIER_API bool WiCar_MQTT_SetAuth(char const * username, char const * password);
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_SetAuth(char const * username, char const * password);
 
 /*
  * Function: WiCar_MQTT_SetKeepLive
@@ -121,7 +124,7 @@ WISE_CARRIER_API bool WiCar_MQTT_SetAuth(char const * username, char const * pas
  * 	boolean value for success or not.
  *
  */
-WISE_CARRIER_API bool WiCar_MQTT_SetKeepLive(int keepalive);
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_SetKeepLive(int keepalive);
 
 //TLS
 /*
@@ -159,7 +162,7 @@ WISE_CARRIER_API bool WiCar_MQTT_SetKeepLive(int keepalive);
  *	boolean value for success or not.
  *
  */
-WISE_CARRIER_API bool WiCar_MQTT_SetTls(const char *cafile, const char *capath, const char *certfile, const char *keyfile, const char* password);
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_SetTls(const char *cafile, const char *capath, const char *certfile, const char *keyfile, const char* password);
 /*
  * Function: WiCar_MQTT_SetTlsPsk
  *
@@ -179,7 +182,7 @@ WISE_CARRIER_API bool WiCar_MQTT_SetTls(const char *cafile, const char *capath, 
  *	boolean value for success or not.
  *
  */
-WISE_CARRIER_API bool WiCar_MQTT_SetTlsPsk(const char *psk, const char *identity, const char *ciphers);
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_SetTlsPsk(const char *psk, const char *identity, const char *ciphers);
 
 /*
  * Function: WiCar_MQTT_Connect
@@ -195,7 +198,7 @@ WISE_CARRIER_API bool WiCar_MQTT_SetTlsPsk(const char *psk, const char *identity
  * Returns:
  *  boolean value for success or not.
  */
-WISE_CARRIER_API bool WiCar_MQTT_Connect(const char* address, int port, const char* clientId, WICAR_LOSTCONNECT_CB on_lostconnect);
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_Connect(const char* address, int port, const char* clientId, WICAR_LOSTCONNECT_CB on_lostconnect);
 
 /*
  * Function: WiCar_MQTT_Reconnect
@@ -208,7 +211,7 @@ WISE_CARRIER_API bool WiCar_MQTT_Connect(const char* address, int port, const ch
  * Returns:
  *  boolean value for success or not.
  */
-WISE_CARRIER_API bool WiCar_MQTT_Reconnect();
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_Reconnect();
 
 /*
  * Function: WiCar_MQTT_Disconnect
@@ -221,7 +224,7 @@ WISE_CARRIER_API bool WiCar_MQTT_Reconnect();
  * Returns:
  *  boolean value for success or not.
  */
-WISE_CARRIER_API bool WiCar_MQTT_Disconnect(int force);
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_Disconnect(int force);
 
 /*
  * Function: WiCar_MQTT_Publish
@@ -238,7 +241,7 @@ WISE_CARRIER_API bool WiCar_MQTT_Disconnect(int force);
  * Returns:
  *  the bytes of sending.
  */
-WISE_CARRIER_API bool WiCar_MQTT_Publish(const char* topic, const void *msg, int msglen, int retain, int qos);
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_Publish(const char* topic, const void *msg, int msglen, int retain, int qos);
 
 /*
  * Function: WiCar_MQTT_Subscribe
@@ -253,7 +256,7 @@ WISE_CARRIER_API bool WiCar_MQTT_Publish(const char* topic, const void *msg, int
  * Returns:
  *  boolean value for success or not.
  */
-WISE_CARRIER_API bool WiCar_MQTT_Subscribe(const char* topic, int qos, WICAR_MESSAGE_CB on_recieve);
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_Subscribe(const char* topic, int qos, WICAR_MESSAGE_CB on_recieve);
 
 /*
  * Function: WiCar_MQTT_UnSubscribe
@@ -266,7 +269,7 @@ WISE_CARRIER_API bool WiCar_MQTT_Subscribe(const char* topic, int qos, WICAR_MES
  * Returns:
  *  boolean value for success or not.
  */
-WISE_CARRIER_API bool WiCar_MQTT_UnSubscribe(const char* topic);
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_UnSubscribe(const char* topic);
 /*
  * Function: WiCar_MQTT_GetLocalIP
  *
@@ -279,7 +282,7 @@ WISE_CARRIER_API bool WiCar_MQTT_UnSubscribe(const char* topic);
  *  boolean value for success or not.
  */
 
-WISE_CARRIER_API bool WiCar_MQTT_GetLocalIP(const char *address);
+WISE_CARRIER_API bool WISE_CARRIER_CALL WiCar_MQTT_GetLocalIP(const char *address);
 
 //error
 /*
@@ -293,7 +296,7 @@ WISE_CARRIER_API bool WiCar_MQTT_GetLocalIP(const char *address);
  * Returns:
  *  error comment string.
  */
-WISE_CARRIER_API const char *WiCar_MQTT_GetCurrentErrorString();
+WISE_CARRIER_API const char * WISE_CARRIER_CALL WiCar_MQTT_GetCurrentErrorString();
 
 
 
