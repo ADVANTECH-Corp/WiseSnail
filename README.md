@@ -13,6 +13,7 @@ WiseSnail is the short name of Wise Sensor Network Abstract Interactive Layer. I
   * Ubuntu ( 14.04, 16.04 )
   * Yocto ( 1.5.3 Dora )
   * OpenWRT
+  * Windows ( 7, 10 )
 
 # Document
 For more detail information, please visit our online Wiki:
