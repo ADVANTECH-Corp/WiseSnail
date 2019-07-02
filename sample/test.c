@@ -9,13 +9,14 @@
 #pragma comment(lib, "WiseSnail.lib")
 #endif
 
-//#define SERVER_URL            "dev-wisepaas.cloudapp.net"
-//#define SERVER_URL            "dev-wisepaas-ssl.cloudapp.net"
-//#define SERVER_URL 			"dev-wisepaas-ssl.eastasia.cloudapp.azure.com"
-#define SERVER_URL 				"dev-wisepaas.eastasia.cloudapp.azure.com"
-//#define SERVER_URL 				"rmm.wise-paas.com"
-//#define SERVER_URL            "172.22.12.9"
-//#define SERVER_URL            "172.22.12.178"
+//#define SERVER_URL              "dev-wisepaas.cloudapp.net"
+//#define SERVER_URL              "dev-wisepaas-ssl.cloudapp.net"
+//#define SERVER_URL              "dev-wisepaas-ssl.eastasia.cloudapp.azure.com"
+//#define SERVER_URL              "dev-wisepaas.eastasia.cloudapp.azure.com"
+//#define SERVER_URL              "rmm.wise-paas.com"
+//#define SERVER_URL              "172.22.12.9"
+//#define SERVER_URL              "172.22.12.178"
+#define SERVER_URL              "127.0.0.1"
 /*Info/reset
 Action/AutoReport*/
 
@@ -40,7 +41,7 @@ WiseSnail_InfoSpec interface1[] = {
 char SHName[128] = "123";
 int SetSHName(WiseSnail_Data *mydata) {
    printf("###############Set SenHub name %s\n",mydata->string);
-   strcpy(SHName, data->string);
+   strcpy(SHName, mydata->string);
 }
 
 int GetSHName(WiseSnail_Data *mydata) {
