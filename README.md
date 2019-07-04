@@ -15,6 +15,16 @@ WiseSnail is the short name of Wise Sensor Network Abstract Interactive Layer. I
   * OpenWRT
   * Windows ( 7, 10 )
 
+## Build WiseSnail on Ubuntu 16.04
+```sh
+$ cd Ubuntu-1604/script
+$ sudo ./install_dev_tools.bash
+$ sudo ./install_paho_mqtt_c.bash
+$ ./build_wisesnail.bash
+```
+
+Then, WiseSnail library, header file and sample program (test) will be at release folder.
+
 # Document
 For more detail information, please visit our online Wiki:
 http://ess-wiki.advantech.com.tw/view/IoTGateway/WiseSnail
