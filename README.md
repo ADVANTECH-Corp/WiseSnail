@@ -17,12 +17,11 @@ WiseSnail is the short name of Wise Sensor Network Abstract Interactive Layer. I
 
 ## Build WiseSnail on Ubuntu 16.04
 ```sh
-$ cd Ubuntu-1604/script
+$ cd script/Ubuntu-1604
 $ sudo ./install_dev_tools.bash
 $ sudo ./install_paho_mqtt_c.bash
 $ ./build_wisesnail.bash
 ```
-
 Then, WiseSnail library, header file and sample program (test) will be at release folder.
 
 # Document
