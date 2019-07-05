@@ -9,14 +9,9 @@
 #pragma comment(lib, "WiseSnail.lib")
 #endif
 
-//#define SERVER_URL              "dev-wisepaas.cloudapp.net"
-//#define SERVER_URL              "dev-wisepaas-ssl.cloudapp.net"
-//#define SERVER_URL              "dev-wisepaas-ssl.eastasia.cloudapp.azure.com"
-//#define SERVER_URL              "dev-wisepaas.eastasia.cloudapp.azure.com"
-//#define SERVER_URL              "rmm.wise-paas.com"
-//#define SERVER_URL              "172.22.12.9"
-//#define SERVER_URL              "172.22.12.178"
 #define SERVER_URL              "127.0.0.1"
+#define SERVER_PORT		1883
+
 /*Info/reset
 Action/AutoReport*/
 
@@ -260,7 +255,7 @@ int main() {
 	WiseSnail_Init("IotGW",NULL, NULL, NULL, 0);
 	WiseSnail_RegisterInterface("000E4CAB1234", "Ethernet", -1, interface1, 1);
 	
-    if(WiseSnail_Connect(SERVER_URL, 1883, "", "", NULL, 0) == 0) {
+    if(WiseSnail_Connect(SERVER_URL, SERVER_PORT, "", "", NULL, 0) == 0) {
     	//
 		// no succesful connection to broker
 		//

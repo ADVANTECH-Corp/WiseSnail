@@ -36,5 +36,9 @@ $(SERVICE_ProgramName): $(SERVICE_DEPEND)
 .cpp.o:
 	$(CC) -c $(INCPATH) $(CFLAGS) $<
 
+install:
+	mkdir -p ../release
+	cp -af test ../release
+
 clean:
 	rm -rf *.o $(TEST_ProgramName) $(SERVICE_ProgramName)

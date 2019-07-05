@@ -22,6 +22,7 @@ Install development tools
 sudo apt update
 sudo apt -y install git build-essential automake autoconf libtool cmake libmosquitto-dev
 ```
+
 Install Eclipse Paho MQTT C client library
 ```sh
 sudo apt update
@@ -32,12 +33,25 @@ make
 make html
 sudo make install
 ```
+
 Build WiseSnail
 ```sh
 $ cd script/Ubuntu-1604
 $ ./build_wisesnail.bash
 ```
-Then, WiseSnail library, header file and sample program (test) will be at release folder.
+Then, WiseSnail library, header file and sample program (test) will be installed at release folder.
+
+Notice:
+* Sample program connect to local MQTT Broker (ip: 127.0.0.1), so if you want to run sample program, you need to install a local MQTT Broker. 
+
+Install Mosquitto Broker
+```sh
+sudo apt-add-repository -y ppa:mosquitto-dev/mosquitto-ppa
+sudo apt update
+sudo apt -y install mosquitto mosquitto-clients
+```
+
+Run sample program
 ```sh
 cd release
 ./test
