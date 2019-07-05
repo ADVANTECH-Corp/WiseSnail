@@ -34,26 +34,26 @@ make html
 sudo make install
 ```
 
-Build WiseSnail
-```sh
-$ cd script/Ubuntu-1604
-$ ./build_wisesnail.bash
-```
-Then, WiseSnail library, header file and sample program (test) will be installed at release folder.
-
-Notice:
-* Sample program connect to local MQTT Broker (ip: 127.0.0.1), so if you want to run sample program, you need to install a local MQTT Broker. 
-
 Install Mosquitto Broker
 ```sh
 sudo apt-add-repository -y ppa:mosquitto-dev/mosquitto-ppa
 sudo apt update
 sudo apt -y install mosquitto mosquitto-clients
 ```
+Notice:
+* WiseSnail Sample program will connect to local MQTT Broker (ip: 127.0.0.1), so if you want to run WiseSnail sample program, you need to install a local MQTT Broker.
+
+Build WiseSnail
+```sh
+git clone https://github.com/ADVANTECH-Corp/WiseSnail.git
+cd WiseSnail/script/Ubuntu-1604
+./build_wisesnail.bash
+```
+Then, WiseSnail library, header file and sample program (test) will be installed at release folder.
 
 Run sample program
 ```sh
-cd release
+cd WiseSnail/release
 ./test
 ```
 
