@@ -16,13 +16,32 @@ WiseSnail is the short name of Wise Sensor Network Abstract Interactive Layer. I
   * Windows ( 7, 10 )
 
 ## Build WiseSnail on Ubuntu 16.04
+
+Install development tools
+```sh
+sudo apt update
+sudo apt -y install git build-essential automake autoconf libtool cmake libmosquitto-dev
+```
+Install Eclipse Paho MQTT C client library
+```sh
+sudo apt update
+sudo apt -y install libssl-dev doxygen graphviz
+git clone https://github.com/eclipse/paho.mqtt.c.git
+cd paho.mqtt.c
+make
+make html
+sudo make install
+```
+Build WiseSnail
 ```sh
 $ cd script/Ubuntu-1604
-$ sudo ./install_dev_tools.bash
-$ sudo ./install_paho_mqtt_c.bash
 $ ./build_wisesnail.bash
 ```
 Then, WiseSnail library, header file and sample program (test) will be at release folder.
+```sh
+cd release
+./test
+```
 
 # Document
 For more detail information, please visit our online Wiki:
