@@ -258,7 +258,7 @@ int main (void)
     int second = 0;
 
 	WiseSnail_Init("IotGW",NULL, NULL, NULL, 0);
-	WiseSnail_RegisterInterface("000E4CAB1234", "Ethernet", -1, interface1, 1);
+	WiseSnail_RegisterInterface("000E4CAB1234", "Bluetooth", 0, interface1, 1);
 
 	if(WiseSnail_Connect(SERVER_URL, SERVER_PORT, "", "", NULL, 0) == 0) {
     	//
